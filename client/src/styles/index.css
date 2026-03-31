@@ -1,34 +1,183 @@
-:root {
-  color-scheme: dark;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Smooth, product-like feel */
+@font-face {
+  font-family: "SkillNode Sans";
+  src: url("../assets/fonts/UI-Primary/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "SkillNode Sans";
+  src: url("../assets/fonts/UI-Primary/Inter-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "SkillNode Sans";
+  src: url("../assets/fonts/UI-Primary/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "SkillNode Display";
+  src: url("../assets/fonts/UI-Primary/Inter-Black.woff2") format("woff2");
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "SkillNode Mono";
+  src: url("../assets/fonts/Code-Mono/JetBrainsMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "SkillNode Mono";
+  src: url("../assets/fonts/Code-Mono/JetBrainsMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --surface: rgba(8, 15, 28, 0.72);
+  --surface-strong: rgba(7, 13, 24, 0.88);
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #f5f7fb;
+  --muted: rgba(226, 232, 240, 0.66);
+  --accent: #7dd3fc;
+  --accent-2: #34d399;
+  --accent-3: #f59e0b;
+}
+
 html,
-body {
-  height: 100%;
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
-    "Noto Sans", "Liberation Sans", sans-serif;
-}
-
-/* Subtle grid + glow background */
-.app-shell-bg {
+  margin: 0;
+  color: var(--text);
   background:
-    radial-gradient(900px 420px at 15% 10%, rgba(99, 102, 241, 0.28), transparent 60%),
-    radial-gradient(700px 360px at 85% 20%, rgba(16, 185, 129, 0.18), transparent 55%),
-    radial-gradient(800px 500px at 60% 90%, rgba(236, 72, 153, 0.16), transparent 60%),
-    linear-gradient(to bottom, rgba(2, 6, 23, 1), rgba(2, 6, 23, 0.92));
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), transparent 28%),
+    radial-gradient(circle at 85% 12%, rgba(245, 158, 11, 0.16), transparent 26%),
+    radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.12), transparent 32%),
+    linear-gradient(180deg, #07111f 0%, #091523 36%, #08101b 100%);
+  font-family: "SkillNode Sans", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Nice focus rings */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black 42%, transparent 100%);
+  opacity: 0.18;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(125, 211, 252, 0.12), transparent 0 28%),
+    radial-gradient(circle at 80% 18%, rgba(251, 191, 36, 0.1), transparent 0 24%),
+    radial-gradient(circle at 55% 80%, rgba(52, 211, 153, 0.08), transparent 0 30%);
+  filter: blur(40px);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+textarea {
+  font-family: "SkillNode Sans", "Segoe UI", sans-serif;
+}
+
+code,
+pre {
+  font-family: "SkillNode Mono", monospace;
+}
+
+.app-shell-bg {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(6, 11, 20, 0.58), rgba(6, 11, 20, 0.32)),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 36%);
+}
+
+.page-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-shell::before {
+  content: "";
+  position: absolute;
+  inset: auto -10% -35% 55%;
+  height: 28rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.16), transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.hero-kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.58);
+}
+
+.display-title {
+  font-family: "SkillNode Display", "SkillNode Sans", sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.glass-border {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 80px -48px rgba(0, 0, 0, 0.9);
+}
+
+.status-dot {
+  display: inline-block;
+  height: 0.55rem;
+  width: 0.55rem;
+  border-radius: 999px;
+  background: #34d399;
+  box-shadow: 0 0 0 0.2rem rgba(52, 211, 153, 0.18);
+}
+
 *:focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.9);
+  outline: 2px solid rgba(125, 211, 252, 0.9);
   outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(125, 211, 252, 0.28);
+  color: #fff;
 }
 

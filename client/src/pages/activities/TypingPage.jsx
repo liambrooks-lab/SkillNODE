@@ -1,29 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BrainCircuit, Gauge, ShieldCheck } from "lucide-react";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
-import { useToast } from "../../components/ui/Toast";
-import { antiCheat } from "../../lib/antiCheat";
+import { ToastProvider, useToast } from "../../components/ui/Toast";
 import { api } from "../../lib/api";
+import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
 const TEXTS = [
-  "SkillNODE is where focus becomes performance.",
-  "Type fast, think faster, and stay consistent.",
-  "Precision beats speed when pressure rises.",
+  "SkillNODE is where focus becomes visible performance under pressure.",
+  "Type fast, think faster, and keep your rhythm clean for the full run.",
+  "Sharp hands and calm breathing beat chaotic speed every single time.",
 ];
 
 function statsFor({ text, input, elapsedMs }) {
   const minutes = elapsedMs / 60000;
   const words = input.trim().length ? input.trim().split(/\s+/).length : 0;
   const wpm = minutes > 0 ? Math.round(words / minutes) : 0;
-
   const correctChars = [...input].filter((ch, i) => ch === text[i]).length;
   const accuracy = input.length ? Math.round((correctChars / input.length) * 100) : 100;
-
-  return { wpm, accuracy };
+  const progress = text.length ? Math.min(100, Math.round((input.length / text.length) * 100)) : 0;
+  return { wpm, accuracy, progress };
 }
 
-export function TypingPage() {
+function TypingInner() {
   const toast = useToast();
+  useFairPlayMonitor("typing");
+
   const [text, setText] = useState(TEXTS[0]);
   const [input, setInput] = useState("");
   const [running, setRunning] = useState(false);
@@ -32,43 +34,30 @@ export function TypingPage() {
   const [aiBusy, setAiBusy] = useState(false);
   const t0Ref = useRef(0);
 
-  const { wpm, accuracy } = useMemo(
+  const { wpm, accuracy, progress } = useMemo(
     () => statsFor({ text, input, elapsedMs }),
     [text, input, elapsedMs],
   );
 
   useEffect(() => {
-    const stop = antiCheat.start({
-      onSuspicious: async (evt) => {
-        toast.push({ title: "Fair play alert", message: evt.message, kind: "warning" });
-        try {
-          await api.post("/api/audit/event", { type: evt.type, meta: evt.meta });
-        } catch {
-          // ignore
-        }
-      },
-    });
-    return stop;
-  }, [toast]);
-
-  useEffect(() => {
     if (!running) return;
+
     const id = window.setInterval(() => {
       setElapsedMs(Date.now() - t0Ref.current);
     }, 120);
+
     return () => window.clearInterval(id);
   }, [running]);
 
-  function start() {
+  function startNewText() {
     const next = TEXTS[Math.floor(Math.random() * TEXTS.length)];
     setText(next);
     setInput("");
     setElapsedMs(0);
-    t0Ref.current = Date.now();
-    setRunning(true);
+    setRunning(false);
   }
 
-  function stop() {
+  function finishRun() {
     setRunning(false);
     const run = {
       at: Date.now(),
@@ -81,7 +70,7 @@ export function TypingPage() {
     saveHistory(nextHistory);
     toast.push({
       title: "Run finished",
-      message: `WPM ${wpm} • Accuracy ${accuracy}%`,
+      message: `WPM ${wpm} | Accuracy ${accuracy}%`,
       kind: "success",
     });
   }
@@ -94,9 +83,15 @@ export function TypingPage() {
         prompt:
           `Target text: "${text}"\n` +
           `What user typed so far: "${input}"\n` +
-          "Give a short tip to improve accuracy and rhythm.",
+          "Give a short coaching note to improve rhythm and accuracy.",
       });
-      toast.push({ title: "AI hint", message: data.hint, kind: "info", durationMs: 5000 });
+
+      toast.push({
+        title: "AI hint",
+        message: data.hint,
+        kind: "info",
+        durationMs: 5000,
+      });
     } catch (err) {
       toast.push({
         title: "AI hint unavailable",
@@ -109,74 +104,124 @@ export function TypingPage() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      <Card className="p-6 md:col-span-2">
-        <div className="text-sm text-white/60">Typing speed</div>
-        <div className="mt-1 text-lg font-semibold">Stay smooth. Stay accurate.</div>
-
-        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed text-white/80">
-          {text}
-        </div>
-
-        <textarea
-          className="mt-4 h-40 w-full resize-none rounded-2xl border border-white/10 bg-slate-950/30 p-4 text-sm text-white/80 placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
-          placeholder="Start typing here…"
-          value={input}
-          onChange={(e) => {
-            if (!running) {
-              t0Ref.current = Date.now();
-              setRunning(true);
-            }
-            setInput(e.target.value);
-          }}
-        />
-
-        <div className="mt-4 flex flex-wrap gap-3">
-          <Button onClick={start}>New text</Button>
-          <Button variant="secondary" onClick={stop} disabled={!running}>
-            Finish
-          </Button>
-          <Button variant="ghost" onClick={getHint} disabled={aiBusy}>
-            {aiBusy ? "Thinking…" : "AI hint"}
-          </Button>
-        </div>
-      </Card>
-
-      <Card className="p-6">
-        <div className="text-sm text-white/60">Stats</div>
-        <div className="mt-4 grid gap-3">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div className="text-xs text-white/60">WPM</div>
-            <div className="mt-1 text-3xl font-semibold">{wpm}</div>
+    <div className="space-y-6 pb-24">
+      <Card className="p-6 md:p-8">
+        <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <div className="hero-kicker">Typing Velocity</div>
+            <div className="display-title mt-2 text-4xl md:text-5xl">Stay smooth. Stay accurate.</div>
+            <div className="mt-4 max-w-3xl text-sm leading-7 text-white/62 md:text-base">
+              This lab tracks speed, accuracy, and best-effort fair-play signals while preserving a
+              clean, serious UI. It is built for both solo practice and future multiplayer races.
+            </div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div className="text-xs text-white/60">Accuracy</div>
-            <div className="mt-1 text-3xl font-semibold">{accuracy}%</div>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div className="text-xs text-white/60">Time</div>
-            <div className="mt-1 text-3xl font-semibold">{(elapsedMs / 1000).toFixed(1)}s</div>
-          </div>
-        </div>
 
-        <div className="mt-6">
-          <div className="text-xs font-medium text-white/60">Recent runs</div>
-          <div className="mt-2 space-y-2">
-            {history.map((h) => (
-              <div
-                key={h.at}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2"
-              >
-                <div className="text-sm font-medium">{h.wpm} WPM</div>
-                <div className="text-xs text-white/60">{h.accuracy}% • {h.seconds}s</div>
-              </div>
-            ))}
-            {history.length === 0 ? (
-              <div className="text-sm text-white/50">No runs yet.</div>
-            ) : null}
+          <div className="grid gap-3 sm:grid-cols-3">
+            <MiniStat icon={Gauge} label="WPM" value={String(wpm)} />
+            <MiniStat icon={BrainCircuit} label="Accuracy" value={`${accuracy}%`} />
+            <MiniStat icon={ShieldCheck} label="Progress" value={`${progress}%`} />
           </div>
         </div>
       </Card>
+
+      <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+        <Card className="p-6">
+          <div className="rounded-[28px] border border-white/10 bg-slate-950/28 p-5 text-base leading-8 text-white/85">
+            {text}
+          </div>
+
+          <textarea
+            className="mt-4 h-52 w-full resize-none rounded-[28px] border border-white/10 bg-slate-950/45 p-5 text-sm leading-7 text-white placeholder:text-white/28 focus:border-sky-300/60 focus:outline-none"
+            placeholder="Start typing here..."
+            value={input}
+            onChange={(e) => {
+              if (!running) {
+                t0Ref.current = Date.now();
+                setRunning(true);
+              }
+              setInput(e.target.value);
+            }}
+          />
+
+          <div className="mt-4 h-3 overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full bg-[linear-gradient(90deg,#7dd3fc,#34d399)] transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Button onClick={startNewText}>New text</Button>
+            <Button variant="secondary" onClick={finishRun} disabled={!running}>
+              Finish run
+            </Button>
+            <Button variant="ghost" onClick={getHint} disabled={aiBusy}>
+              {aiBusy ? "Thinking..." : "AI rhythm coach"}
+            </Button>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="hero-kicker">Session Data</div>
+          <div className="mt-2 text-2xl font-semibold">Your current run</div>
+
+          <div className="mt-5 grid gap-3">
+            <DataBox label="Elapsed" value={`${(elapsedMs / 1000).toFixed(1)}s`} />
+            <DataBox label="WPM" value={String(wpm)} />
+            <DataBox label="Accuracy" value={`${accuracy}%`} />
+          </div>
+
+          <div className="mt-6">
+            <div className="text-sm font-semibold text-white/75">Recent runs</div>
+            <div className="mt-3 space-y-2">
+              {history.map((item) => (
+                <div
+                  key={item.at}
+                  className="flex items-center justify-between rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm"
+                >
+                  <div>{item.wpm} WPM</div>
+                  <div className="text-white/58">{item.accuracy}% | {item.seconds}s</div>
+                </div>
+              ))}
+
+              {history.length === 0 ? (
+                <div className="rounded-[20px] border border-dashed border-white/10 px-4 py-6 text-sm text-white/45">
+                  No completed runs yet.
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export function TypingPage() {
+  return (
+    <ToastProvider>
+      <TypingInner />
+    </ToastProvider>
+  );
+}
+
+function MiniStat({ icon: Icon, label, value }) {
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+      <div className="flex items-center gap-2 text-sm text-white/55">
+        <Icon size={16} className="text-cyan-200" />
+        {label}
+      </div>
+      <div className="mt-3 text-2xl font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function DataBox({ label, value }) {
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+      <div className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</div>
+      <div className="mt-2 text-3xl font-semibold">{value}</div>
     </div>
   );
 }
@@ -198,7 +243,6 @@ function saveHistory(list) {
   try {
     localStorage.setItem(KEY, JSON.stringify(list));
   } catch {
-    // ignore
+    // Ignore persistence failures.
   }
 }
-

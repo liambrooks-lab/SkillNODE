@@ -8,22 +8,22 @@ export function Button({
   ...props
 }) {
   const base =
-    "inline-flex items-center justify-center rounded-xl font-medium transition active:translate-y-[1px] disabled:opacity-50 disabled:pointer-events-none";
+    "inline-flex items-center justify-center rounded-2xl font-medium transition duration-200 active:translate-y-[1px] disabled:pointer-events-none disabled:opacity-50";
 
   const variants = {
     primary:
-      "bg-indigo-500/90 hover:bg-indigo-500 text-white shadow-[0_10px_30px_-10px_rgba(99,102,241,0.8)]",
+      "bg-[linear-gradient(135deg,#7dd3fc_0%,#34d399_100%)] text-slate-950 shadow-[0_18px_40px_-18px_rgba(52,211,153,0.95)] hover:brightness-105",
     secondary:
-      "bg-white/10 hover:bg-white/15 text-white border border-white/10",
-    ghost: "hover:bg-white/10 text-white",
+      "border border-white/10 bg-white/10 text-white hover:bg-white/15",
+    ghost: "text-white hover:bg-white/10",
     danger:
-      "bg-rose-500/90 hover:bg-rose-500 text-white shadow-[0_10px_30px_-10px_rgba(244,63,94,0.65)]",
+      "bg-[linear-gradient(135deg,#fb7185_0%,#f97316_100%)] text-white shadow-[0_18px_40px_-18px_rgba(251,113,133,0.8)] hover:brightness-105",
   };
 
   const sizes = {
-    sm: "h-9 px-3 text-sm",
-    md: "h-11 px-4 text-sm",
-    lg: "h-12 px-5 text-base",
+    sm: "h-10 px-4 text-sm",
+    md: "h-11 px-5 text-sm",
+    lg: "h-12 px-6 text-base",
   };
 
   return (

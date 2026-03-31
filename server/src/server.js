@@ -11,6 +11,7 @@ import { authRouter } from "./routes/auth.js";
 import { meRouter } from "./routes/me.js";
 import { auditRouter } from "./routes/audit.js";
 import { aiRouter } from "./routes/ai.js";
+import { publicRouter } from "./routes/public.js";
 import { attachRealtime } from "./realtime/socket.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -39,6 +40,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/me", meRouter);
 app.use("/api/audit", auditRouter);
 app.use("/api/ai", aiRouter);
+app.use("/api/public", publicRouter);
 
 const io = new Server(server, {
   cors: {
