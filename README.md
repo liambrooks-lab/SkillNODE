@@ -96,11 +96,49 @@ In development, if `RESEND_API_KEY` is missing and `ALLOW_DEV_LOGIN_CODE=true`, 
 
 ## Deployment notes
 
-- Deploy the server anywhere Node + Postgres are available.
-- Deploy the Vite client as a static app with `VITE_API_BASE_URL` pointing at the server.
-- Set `PUBLIC_APP_URL` on the server to the deployed client URL.
+- Recommended split:
+  - backend + Postgres on Render
+  - frontend on Vercel
+- Deploy the Vite client as a static app with `VITE_API_BASE_URL` pointing at the Render backend URL.
+- Set `PUBLIC_APP_URL` on the server to the deployed Vercel URL.
+- If you use Vercel preview URLs too, set `PUBLIC_APP_URLS` to a comma-separated list of allowed origins.
 - Configure `RESEND_API_KEY` and `RESEND_FROM` for real email delivery.
 - Configure `OPENAI_API_KEY` for AI hints.
+
+### Render
+
+- Use the included [render.yaml](F:/Projects/SkillNODE/render.yaml) blueprint.
+- It provisions:
+  - a Postgres database
+  - a Node web service for the API
+- After creating the blueprint, set:
+  - `PUBLIC_APP_URL` to your production Vercel domain
+  - `PUBLIC_APP_URLS` if you want to allow preview domains too
+  - `RESEND_API_KEY`
+  - `RESEND_FROM`
+  - `OPENAI_API_KEY` if AI hints should work in production
+
+### Vercel
+
+- Import the repo and set the project Root Directory to `client`.
+- Vercel will pick up [vercel.json](F:/Projects/SkillNODE/client/vercel.json) for SPA route rewrites.
+- Add:
+  - `VITE_API_BASE_URL=https://your-render-api.onrender.com`
+- Then redeploy.
+
+### Production checklist
+
+- Create the Render blueprint.
+- Set the server env vars.
+- Create the Vercel project with root `client`.
+- Set `VITE_API_BASE_URL`.
+- Confirm that the Vercel URL is added to `PUBLIC_APP_URL`.
+- Test:
+  - email code login
+  - profile upload
+  - multiplayer room join
+  - leaderboard updates
+  - AI hint flow
 
 ## Honest limitations
 
