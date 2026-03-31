@@ -5,13 +5,27 @@ import { getToken } from "./auth";
 let socket = null;
 
 export function getSocket() {
-  if (socket) return socket;
+  const token = getToken();
+
+  if (socket) {
+    if (socket.auth?.token === token) return socket;
+    socket.disconnect();
+    socket = null;
+  }
+
   socket = io(env.apiBaseUrl, {
     transports: ["websocket"],
     auth: {
-      token: getToken(),
+      token,
     },
   });
+
   return socket;
+}
+
+export function closeSocket() {
+  if (!socket) return;
+  socket.disconnect();
+  socket = null;
 }
 

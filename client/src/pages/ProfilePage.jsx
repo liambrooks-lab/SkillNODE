@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Copy, MailCheck, MapPin, Phone, Save, Share2, UserRound } from "lucide-react";
+import { Copy, MailCheck, MapPin, Phone, Save, Share2, Trophy, UserRound } from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
@@ -12,6 +12,7 @@ function ProfileInner() {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [me, setMe] = useState(null);
+  const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState({
     name: "",
@@ -31,11 +32,12 @@ function ProfileInner() {
   useEffect(() => {
     let alive = true;
 
-    api
-      .get("/api/me")
-      .then(({ data }) => {
+    Promise.all([api.get("/api/me"), api.get("/api/me/summary")])
+      .then(([meRes, summaryRes]) => {
         if (!alive) return;
+        const data = meRes.data;
         setMe(data);
+        setSummary(summaryRes.data);
         setDraft({
           name: data.name || "",
           email: data.email || "",
@@ -69,16 +71,20 @@ function ProfileInner() {
       form.append("region", draft.region.trim());
       if (dpFile) form.append("dp", dpFile);
 
-      const { data } = await api.patch("/api/me", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const [profileRes, summaryRes] = await Promise.all([
+        api.patch("/api/me", form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        }),
+        api.get("/api/me/summary"),
+      ]);
 
-      setMe(data);
+      setMe(profileRes.data);
+      setSummary(summaryRes.data);
       setDraft({
-        name: data.name || "",
-        email: data.email || "",
-        phone: data.phone || "",
-        region: data.region || "",
+        name: profileRes.data.name || "",
+        email: profileRes.data.email || "",
+        phone: profileRes.data.phone || "",
+        region: profileRes.data.region || "",
       });
       setDpFile(null);
       toast.push({ title: "Profile updated", message: "Your public card is now refreshed.", kind: "success" });
@@ -112,7 +118,7 @@ function ProfileInner() {
           url: shareUrl,
         });
       } catch {
-        // Ignore cancelled share interactions.
+        // Ignore cancelled shares.
       }
       return;
     }
@@ -168,9 +174,9 @@ function ProfileInner() {
               </Button>
             </div>
 
-            <div className="mt-5 rounded-[24px] border border-white/10 bg-white/5 p-4 text-sm text-white/62">
-              Anyone with your share link can open your public profile card. Private account editing
-              stays behind login.
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <StatChip label="Attempts" value={String(summary?.totals?.totalAttempts ?? 0)} />
+              <StatChip label="Alerts" value={String(summary?.totals?.alertCount ?? 0)} />
             </div>
           </div>
         </Card>
@@ -185,36 +191,19 @@ function ProfileInner() {
           <form className="mt-6 space-y-5" onSubmit={saveProfile}>
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Name" icon={UserRound}>
-                <Input
-                  value={draft.name}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, name: e.target.value }))}
-                  required
-                />
+                <Input value={draft.name} onChange={(e) => setDraft((prev) => ({ ...prev, name: e.target.value }))} required />
               </Field>
               <Field label="Email" icon={MailCheck}>
-                <Input
-                  type="email"
-                  value={draft.email}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, email: e.target.value }))}
-                  required
-                />
+                <Input type="email" value={draft.email} onChange={(e) => setDraft((prev) => ({ ...prev, email: e.target.value }))} required />
               </Field>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Phone" icon={Phone}>
-                <Input
-                  value={draft.phone}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, phone: e.target.value }))}
-                  required
-                />
+                <Input value={draft.phone} onChange={(e) => setDraft((prev) => ({ ...prev, phone: e.target.value }))} required />
               </Field>
               <Field label="Region" icon={MapPin}>
-                <Input
-                  value={draft.region}
-                  onChange={(e) => setDraft((prev) => ({ ...prev, region: e.target.value }))}
-                  required
-                />
+                <Input value={draft.region} onChange={(e) => setDraft((prev) => ({ ...prev, region: e.target.value }))} required />
               </Field>
             </div>
 
@@ -242,6 +231,47 @@ function ProfileInner() {
               </Button>
             </div>
           </form>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
+        <Card className="p-6">
+          <div className="hero-kicker">Best Results</div>
+          <div className="mt-2 text-2xl font-semibold">What your public card can flex</div>
+          <div className="mt-5 space-y-3">
+            {(summary?.bestResults || []).map((result) => (
+              <div key={result.activityType} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="font-semibold capitalize">{result.activityType}</div>
+                  <div className="text-lg font-semibold">{formatScore(result.bestScore)}</div>
+                </div>
+                <div className="mt-2 text-sm text-white/58">
+                  {result.bestAccuracy != null ? `Best accuracy ${Math.round(result.bestAccuracy)}%` : "Score stored"}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="hero-kicker">Recent Sessions</div>
+          <div className="mt-2 text-2xl font-semibold">Latest saved activity runs</div>
+          <div className="mt-5 space-y-3">
+            {(summary?.recentResults || []).map((result) => (
+              <div key={result.id} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 font-semibold capitalize">
+                    <Trophy size={16} className="text-cyan-200" />
+                    {result.activityType}
+                  </div>
+                  <div className="text-lg font-semibold">{formatScore(result.score)}</div>
+                </div>
+                <div className="mt-2 text-sm text-white/58">
+                  {result.accuracy != null ? `Accuracy ${Math.round(result.accuracy)}%` : "Accuracy not tracked"}
+                </div>
+              </div>
+            ))}
+          </div>
         </Card>
       </div>
     </div>
@@ -275,4 +305,17 @@ function MetaLine({ icon: Icon, text }) {
       <span>{text}</span>
     </div>
   );
+}
+
+function StatChip({ label, value }) {
+  return (
+    <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
+      <div className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</div>
+      <div className="mt-2 text-2xl font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function formatScore(value) {
+  return Number.isFinite(value) ? Number(value).toFixed(value % 1 === 0 ? 0 : 1) : "0";
 }

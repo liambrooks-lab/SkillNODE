@@ -4,6 +4,7 @@ import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { ToastProvider, useToast } from "../../components/ui/Toast";
+import { submitActivityResult } from "../../lib/results";
 
 const WORDS = [
   { word: "vector", hint: "A word common in both math and programming." },
@@ -70,6 +71,17 @@ function GuessingInner() {
 
   function handleWin(nextTries) {
     const key = mode === "number" ? "Number mode" : "Word mode";
+    const score = Number((100 / nextTries).toFixed(2));
+
+    void submitActivityResult({
+      activityType: "guess",
+      score,
+      metadata: {
+        mode,
+        tries: nextTries,
+      },
+    });
+
     toast.push({ title: "You got it", message: `${key} solved in ${nextTries} tries.`, kind: "success" });
 
     const currentBest = best[mode];

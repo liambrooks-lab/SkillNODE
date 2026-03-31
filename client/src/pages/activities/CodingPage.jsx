@@ -4,6 +4,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { ToastProvider, useToast } from "../../components/ui/Toast";
 import { api } from "../../lib/api";
+import { submitActivityResult } from "../../lib/results";
 import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
 const CHALLENGES = [
@@ -96,6 +97,21 @@ function CodingInner() {
 
       setResults(nextResults);
       const passed = nextResults.filter((item) => item.pass).length;
+      const accuracy = Number(((passed / nextResults.length) * 100).toFixed(2));
+
+      if (passed > 0) {
+        void submitActivityResult({
+          activityType: "coding",
+          score: accuracy,
+          accuracy,
+          metadata: {
+            challengeId: challenge.id,
+            passed,
+            totalTests: nextResults.length,
+          },
+        });
+      }
+
       toast.push({
         title: passed === nextResults.length ? "All tests passed" : "Tests completed",
         message: `${passed}/${nextResults.length} passing`,

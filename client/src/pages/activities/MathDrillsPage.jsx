@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { ToastProvider, useToast } from "../../components/ui/Toast";
 import { api } from "../../lib/api";
+import { submitActivityResult } from "../../lib/results";
 import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
 function makeQuestion(level) {
@@ -56,6 +57,14 @@ function MathInner() {
 
   function stopRun() {
     setRunning(false);
+    void submitActivityResult({
+      activityType: "math",
+      score: streak,
+      durationMs: Math.max(0, (45 - seconds) * 1000),
+      metadata: {
+        level,
+      },
+    });
     toast.push({ title: "Round complete", message: `Final streak: ${streak}`, kind: "success" });
     if (!bestStreak || streak > bestStreak) {
       setBestStreak(streak);

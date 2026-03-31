@@ -4,6 +4,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { ToastProvider, useToast } from "../../components/ui/Toast";
 import { api } from "../../lib/api";
+import { submitActivityResult } from "../../lib/results";
 import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
 const TEXTS = [
@@ -68,6 +69,16 @@ function TypingInner() {
     const nextHistory = [run, ...history].slice(0, 8);
     setHistory(nextHistory);
     saveHistory(nextHistory);
+    void submitActivityResult({
+      activityType: "typing",
+      score: wpm,
+      accuracy,
+      durationMs: Math.round(elapsedMs),
+      metadata: {
+        progress,
+        textLength: text.length,
+      },
+    });
     toast.push({
       title: "Run finished",
       message: `WPM ${wpm} | Accuracy ${accuracy}%`,

@@ -4,6 +4,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { ToastProvider, useToast } from "../../components/ui/Toast";
 import { api } from "../../lib/api";
+import { submitActivityResult } from "../../lib/results";
 import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
 const PASSAGE = {
@@ -66,6 +67,15 @@ function ComprehensionInner() {
 
   function submit() {
     setCompleted(true);
+    void submitActivityResult({
+      activityType: "comprehension",
+      score,
+      accuracy: Number(((score / PASSAGE.questions.length) * 100).toFixed(2)),
+      metadata: {
+        totalQuestions: PASSAGE.questions.length,
+        passageTitle: PASSAGE.title,
+      },
+    });
     toast.push({
       title: "Passage complete",
       message: `Score: ${score}/${PASSAGE.questions.length}`,

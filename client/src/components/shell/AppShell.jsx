@@ -17,6 +17,7 @@ import { clearToken } from "../../lib/auth";
 import { ToastProvider, useToast } from "../ui/Toast";
 import { api } from "../../lib/api";
 import { resolveMediaUrl } from "../../lib/media";
+import { closeSocket } from "../../lib/socket";
 
 function ShellInner() {
   const navigate = useNavigate();
@@ -133,6 +134,7 @@ function ShellInner() {
               variant="secondary"
               className="w-full justify-start gap-2"
               onClick={() => {
+                closeSocket();
                 clearToken();
                 toast.push({ title: "Signed out", message: "See you soon.", kind: "success" });
                 navigate("/login");

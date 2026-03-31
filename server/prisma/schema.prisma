@@ -17,7 +17,8 @@ model User {
   createdAt   DateTime    @default(now())
   lastLoginAt DateTime?
 
-  auditEvents AuditEvent[]
+  auditEvents     AuditEvent[]
+  activityResults ActivityResult[]
 }
 
 model AuditEvent {
@@ -34,5 +35,47 @@ model AuditEvent {
   @@index([userId])
   @@index([type])
   @@index([createdAt])
+}
+
+model LoginChallenge {
+  id         String   @id @default(cuid())
+  email      String
+  name       String
+  phone      String
+  region     String
+  dpUrl      String?
+  codeHash   String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([expiresAt])
+}
+
+model ActivityResult {
+  id           String       @id @default(cuid())
+  userId       String
+  activityType ActivityType
+  score        Float
+  accuracy     Float?
+  durationMs   Int?
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, activityType, createdAt])
+  @@index([activityType, score])
+  @@index([createdAt])
+}
+
+enum ActivityType {
+  typing
+  math
+  guess
+  coding
+  grammar
+  comprehension
 }
 

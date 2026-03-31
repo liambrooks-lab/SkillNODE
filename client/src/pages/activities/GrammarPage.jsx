@@ -4,6 +4,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { ToastProvider, useToast } from "../../components/ui/Toast";
 import { api } from "../../lib/api";
+import { submitActivityResult } from "../../lib/results";
 import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
 const QUESTIONS = [
@@ -64,9 +65,18 @@ function GrammarInner() {
 
     if (index === QUESTIONS.length - 1) {
       setCompleted(true);
+      const finalScore = correct ? nextScore : score;
+      void submitActivityResult({
+        activityType: "grammar",
+        score: finalScore,
+        accuracy: Number(((finalScore / QUESTIONS.length) * 100).toFixed(2)),
+        metadata: {
+          totalQuestions: QUESTIONS.length,
+        },
+      });
       toast.push({
         title: "Grammar set complete",
-        message: `Score: ${correct ? nextScore : score}/${QUESTIONS.length}`,
+        message: `Score: ${finalScore}/${QUESTIONS.length}`,
         kind: "success",
       });
       return;

@@ -1,8 +1,8 @@
 import { Router } from "express";
+import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
 import { upload } from "../storage/uploads.js";
-import { z } from "zod";
 
 export const meRouter = Router();
 
@@ -14,19 +14,53 @@ const UpdateProfileSchema = z.object({
 });
 
 meRouter.get("/", requireAuth, async (req, res) => {
+  const user = await prisma.user.findUnique({ where: { id: req.auth.sub } });
+  if (!user) return res.status(404).json({ error: "User not found" });
+  return res.json(publicUser(user));
+});
+
+meRouter.get("/summary", requireAuth, async (req, res) => {
   const userId = req.auth.sub;
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return res.status(404).json({ error: "User not found" });
 
+  const [totalAttempts, alertCount, recentResults, bestResults] = await Promise.all([
+    prisma.activityResult.count({ where: { userId } }),
+    prisma.auditEvent.count({
+      where: {
+        userId,
+        type: {
+          in: ["printscreen", "visibility_hidden", "window_blur"],
+        },
+      },
+    }),
+    prisma.activityResult.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+    }),
+    prisma.activityResult.groupBy({
+      by: ["activityType"],
+      where: { userId },
+      _max: {
+        score: true,
+        accuracy: true,
+      },
+    }),
+  ]);
+
   return res.json({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    region: user.region,
-    dpUrl: user.dpUrl || null,
-    createdAt: user.createdAt,
-    lastLoginAt: user.lastLoginAt,
+    user: publicUser(user),
+    totals: {
+      totalAttempts,
+      alertCount,
+    },
+    recentResults,
+    bestResults: bestResults.map((entry) => ({
+      activityType: entry.activityType,
+      bestScore: entry._max.score ?? 0,
+      bestAccuracy: entry._max.accuracy ?? null,
+    })),
   });
 });
 
@@ -48,16 +82,7 @@ meRouter.patch("/", requireAuth, upload.single("dp"), async (req, res) => {
       },
     });
 
-    return res.json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      region: user.region,
-      dpUrl: user.dpUrl || null,
-      createdAt: user.createdAt,
-      lastLoginAt: user.lastLoginAt,
-    });
+    return res.json(publicUser(user));
   } catch (error) {
     if (error?.code === "P2002") {
       return res.status(409).json({ error: "That email is already in use." });
@@ -67,3 +92,15 @@ meRouter.patch("/", requireAuth, upload.single("dp"), async (req, res) => {
   }
 });
 
+function publicUser(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    region: user.region,
+    dpUrl: user.dpUrl || null,
+    createdAt: user.createdAt,
+    lastLoginAt: user.lastLoginAt,
+  };
+}

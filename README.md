@@ -1,47 +1,109 @@
 # SkillNODE
 
-AI-powered skill + games platform with profiles, multiplayer foundation, and a premium UI.
+SkillNODE is a multi-page AI-powered skills platform with:
+- secure email-code sign-in
+- public player profiles
+- persistent activity results
+- live leaderboard APIs
+- multiplayer room presence
+- typing, math, guessing, coding, grammar, and comprehension modules
 
-## Prereqs
-- Node.js 18+ (recommended 20+)
-- Docker Desktop (recommended) for Postgres
+## Stack
 
-## Quick start (dev)
+- `client`: React + Vite
+- `server`: Express + Prisma + Postgres + Socket.IO
+- `db`: PostgreSQL via Docker
 
-### 1) Start Postgres
+## Local setup
+
+### 1. Start Postgres
 
 ```bash
 docker compose up -d
 ```
 
-### 2) Server
+### 2. Configure server env
 
 ```bash
 cd server
-npm install
 copy .env.example .env
-npm run prisma:migrate
-npm run dev
 ```
 
-Server runs on `http://localhost:5000`.
+Important variables:
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `RESEND_API_KEY`
+- `RESEND_FROM`
+- `OPENAI_API_KEY`
+- `ALLOW_DEV_LOGIN_CODE=true` for local testing without email delivery
 
-### 3) Client
+### 3. Push Prisma schema
+
+```bash
+npm run db:push
+```
+
+### 4. Install dependencies
+
+```bash
+npm install
+npm install -w client
+npm install -w server
+```
+
+### 5. Run the app
+
+Server:
+
+```bash
+npm run dev:server
+```
+
+Client:
 
 ```bash
 cd client
-npm install
-npm run dev
+copy .env.example .env
+cd ..
+npm run dev:client
 ```
 
 Client runs on `http://localhost:5173`.
+Server runs on `http://localhost:5000`.
 
-## Environment variables
+## Build
 
-- Server env is in `server/.env` (see `server/.env.example`)
-  - `RESEND_API_KEY` + `RESEND_FROM` for login emails
-  - `OPENAI_API_KEY` for AI hints
+```bash
+npm run build
+```
 
-## Notes
-- **Screenshot detection** isn’t fully possible on the web. SkillNODE uses best-effort signals (PrintScreen key, tab/window focus changes) to show an alert and log an audit event.
+## Auth flow
 
+1. User enters DP, name, phone, email, and region.
+2. Server sends a 6-digit verification code to the provided email.
+3. User verifies the code.
+4. Server issues a JWT session and sends a login alert email.
+
+In development, if `RESEND_API_KEY` is missing and `ALLOW_DEV_LOGIN_CODE=true`, the verification code is returned in the API response and shown in the UI.
+
+## Persistent product features
+
+- profile editing and public sharing
+- result storage for all main activity pages
+- leaderboard endpoint for competitive views
+- audit logging for fair-play events
+- authenticated Socket.IO room presence
+
+## Deployment notes
+
+- Deploy the server anywhere Node + Postgres are available.
+- Deploy the Vite client as a static app with `VITE_API_BASE_URL` pointing at the server.
+- Set `PUBLIC_APP_URL` on the server to the deployed client URL.
+- Configure `RESEND_API_KEY` and `RESEND_FROM` for real email delivery.
+- Configure `OPENAI_API_KEY` for AI hints.
+
+## Honest limitations
+
+- screenshot detection on the web is best-effort only
+- coding challenges currently run sample tests in-browser, not in a hardened remote judge
+- this is now a strong deployable MVP, but not yet a full enterprise-scale platform with payments, admin moderation, deep analytics, or horizontal scaling infrastructure
