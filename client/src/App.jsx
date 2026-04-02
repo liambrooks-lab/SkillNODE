@@ -18,15 +18,7 @@ const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage").then((m
 
 export default function App() {
   return (
-    <Suspense
-      fallback={
-        <div className="app-shell-bg flex min-h-screen items-center justify-center px-4">
-          <div className="rounded-[24px] border border-white/10 bg-white/5 px-5 py-4 text-sm text-white/70">
-            Loading SkillNODE...
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/u/:userId" element={<PublicProfilePage />} />
@@ -58,3 +50,12 @@ export default function App() {
   );
 }
 
+function RouteFallback() {
+  return (
+    <div className="app-shell-bg flex min-h-screen items-center justify-center px-6">
+      <div className="rounded-[28px] border border-white/10 bg-white/5 px-6 py-4 text-sm text-white/70 backdrop-blur-2xl">
+        Loading SkillNODE...
+      </div>
+    </div>
+  );
+}

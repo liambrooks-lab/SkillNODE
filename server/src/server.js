@@ -22,10 +22,12 @@ const app = express();
 const server = http.createServer(app);
 const allowedOrigins = getAllowedOrigins();
 
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
+      if (!origin || allowedOrigins.has(origin) || env.publicAppUrlRegex?.test(origin)) {
         callback(null, true);
         return;
       }
@@ -36,7 +38,6 @@ app.use(
 );
 app.use(helmet());
 app.use(express.json({ limit: "1mb" }));
-app.set("trust proxy", 1);
 
 // Serve uploads in dev/prod (static)
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
@@ -46,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/healthz", (req, res) => {
-  res.json({ ok: true });
+  res.json({ ok: true, app: "SkillNODE", timestamp: new Date().toISOString() });
 });
 
 app.use("/api/auth", authRouter);
@@ -74,7 +75,13 @@ app.use((err, req, res, next) => {
 
 const io = new Server(server, {
   cors: {
-    origin: [...allowedOrigins],
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.has(origin) || env.publicAppUrlRegex?.test(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("Origin not allowed by CORS"));
+    },
     methods: ["GET", "POST"],
     credentials: true,
   },

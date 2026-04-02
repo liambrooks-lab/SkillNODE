@@ -8,6 +8,7 @@ const EnvSchema = z.object({
   APP_ENV: z.enum(["development", "production", "test"]).optional().default("development"),
   PUBLIC_APP_URL: z.string().default("http://localhost:5173"),
   PUBLIC_APP_URLS: z.string().optional().default(""),
+  PUBLIC_APP_URL_REGEX: z.string().optional().default(""),
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(16),
   RESEND_API_KEY: z.string().optional().default(""),
@@ -20,5 +21,10 @@ const EnvSchema = z.object({
     .transform((value) => value === "true"),
 });
 
-export const env = EnvSchema.parse(process.env);
+const parsedEnv = EnvSchema.parse(process.env);
+
+export const env = {
+  ...parsedEnv,
+  publicAppUrlRegex: parsedEnv.PUBLIC_APP_URL_REGEX ? new RegExp(parsedEnv.PUBLIC_APP_URL_REGEX) : null,
+};
 

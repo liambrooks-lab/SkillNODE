@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "tailwind.config.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

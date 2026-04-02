@@ -111,12 +111,15 @@ In development, if `RESEND_API_KEY` is missing and `ALLOW_DEV_LOGIN_CODE=true`, 
 - It provisions:
   - a Postgres database
   - a Node web service for the API
+  - a persistent disk for uploaded profile images
 - After creating the blueprint, set:
   - `PUBLIC_APP_URL` to your production Vercel domain
   - `PUBLIC_APP_URLS` if you want to allow preview domains too
+  - `PUBLIC_APP_URL_REGEX` if you want to allow dynamic Vercel preview URLs with one regex
   - `RESEND_API_KEY`
   - `RESEND_FROM`
   - `OPENAI_API_KEY` if AI hints should work in production
+ - Render runs `npm run prisma:push` before deploy using the blueprint.
 
 ### Vercel
 
@@ -125,6 +128,12 @@ In development, if `RESEND_API_KEY` is missing and `ALLOW_DEV_LOGIN_CODE=true`, 
 - Add:
   - `VITE_API_BASE_URL=https://your-render-api.onrender.com`
 - Then redeploy.
+
+Suggested preview-origin regex example for Render:
+
+```txt
+^https://.*\.vercel\.app$
+```
 
 ### Production checklist
 
