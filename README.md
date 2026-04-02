@@ -119,7 +119,8 @@ In development, if `RESEND_API_KEY` is missing and `ALLOW_DEV_LOGIN_CODE=true`, 
   - `RESEND_API_KEY`
   - `RESEND_FROM`
   - `OPENAI_API_KEY` if AI hints should work in production
- - Render runs `npm run prisma:push` before deploy using the blueprint.
+- Render runs `npm run prisma:push` before deploy using the blueprint.
+ - On the free plan, Prisma schema sync runs inside the normal Render build command.
 
 ### Vercel
 
