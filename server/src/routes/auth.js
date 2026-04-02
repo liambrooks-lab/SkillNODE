@@ -12,7 +12,7 @@ export const authRouter = Router();
 
 const CHALLENGE_TTL_MINUTES = 10;
 
-const RequestCodeSchema = z.object({
+const ProfileSchema = z.object({
   name: z.string().min(1).max(80),
   phone: z.string().min(5).max(30),
   email: z.string().email(),
@@ -34,8 +34,31 @@ const verifyLimiter = new RateLimiterMemory({
   duration: 60 * 10,
 });
 
+// Direct profile sign-in for the currently deployed MVP.
+// Email OTP remains available in the codebase for later re-enablement.
+authRouter.post("/login", upload.single("dp"), async (req, res) => {
+  const parsed = ProfileSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Invalid fields", details: parsed.error.flatten() });
+  }
+
+  const dpUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+  const session = await upsertUserAndIssueSession({
+    ...parsed.data,
+    dpUrl,
+  });
+
+  sendLoginEmail({
+    to: session.user.email,
+    name: session.user.name,
+    region: session.user.region,
+  }).catch(() => null);
+
+  return res.json(session);
+});
+
 authRouter.post("/request-code", upload.single("dp"), async (req, res) => {
-  const parsed = RequestCodeSchema.safeParse(req.body);
+  const parsed = ProfileSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: "Invalid fields", details: parsed.error.flatten() });
   }
@@ -123,26 +146,42 @@ authRouter.post("/verify-code", async (req, res) => {
     data: { consumedAt: new Date() },
   });
 
+  const session = await upsertUserAndIssueSession({
+    name: challenge.name,
+    phone: challenge.phone,
+    email: challenge.email,
+    region: challenge.region,
+    dpUrl: challenge.dpUrl,
+  });
+
+  sendLoginEmail({
+    to: session.user.email,
+    name: session.user.name,
+    region: session.user.region,
+  }).catch(() => null);
+
+  return res.json(session);
+});
+
+async function upsertUserAndIssueSession({ name, phone, email, region, dpUrl }) {
   const user = await prisma.user.upsert({
-    where: { email: challenge.email },
+    where: { email },
     create: {
-      name: challenge.name,
-      phone: challenge.phone,
-      email: challenge.email,
-      region: challenge.region,
-      dpUrl: challenge.dpUrl,
+      name,
+      phone,
+      email,
+      region,
+      dpUrl,
       lastLoginAt: new Date(),
     },
     update: {
-      name: challenge.name,
-      phone: challenge.phone,
-      region: challenge.region,
-      ...(challenge.dpUrl ? { dpUrl: challenge.dpUrl } : {}),
+      name,
+      phone,
+      region,
+      ...(dpUrl ? { dpUrl } : {}),
       lastLoginAt: new Date(),
     },
   });
-
-  sendLoginEmail({ to: user.email, name: user.name, region: user.region }).catch(() => null);
 
   const token = signToken({
     sub: user.id,
@@ -150,8 +189,8 @@ authRouter.post("/verify-code", async (req, res) => {
     name: user.name,
   });
 
-  return res.json({ token, user: publicUser(user) });
-});
+  return { token, user: publicUser(user) };
+}
 
 function publicUser(user) {
   return {
