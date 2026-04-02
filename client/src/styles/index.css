@@ -1,42 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: "SkillNode Sans";
-  src: url("../assets/fonts/UI-Primary/Inter-Regular.woff2") format("woff2");
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: "SkillNode Sans";
-  src: url("../assets/fonts/UI-Primary/Inter-Medium.woff2") format("woff2");
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: "SkillNode Sans";
-  src: url("../assets/fonts/UI-Primary/Inter-Bold.woff2") format("woff2");
-  font-weight: 700;
-}
-
-@font-face {
-  font-family: "SkillNode Display";
-  src: url("../assets/fonts/UI-Primary/Inter-Black.woff2") format("woff2");
-  font-weight: 900;
-}
-
-@font-face {
-  font-family: "SkillNode Mono";
-  src: url("../assets/fonts/Code-Mono/JetBrainsMono-Regular.ttf") format("truetype");
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: "SkillNode Mono";
-  src: url("../assets/fonts/Code-Mono/JetBrainsMono-Bold.ttf") format("truetype");
-  font-weight: 700;
-}
 
 :root {
   color-scheme: dark;
@@ -69,7 +35,7 @@ body {
     radial-gradient(circle at 85% 12%, rgba(245, 158, 11, 0.16), transparent 26%),
     radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.12), transparent 32%),
     linear-gradient(180deg, #07111f 0%, #091523 36%, #08101b 100%);
-  font-family: "SkillNode Sans", "Segoe UI", sans-serif;
+  font-family: "Manrope", "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -112,12 +78,12 @@ textarea {
 }
 
 textarea {
-  font-family: "SkillNode Sans", "Segoe UI", sans-serif;
+  font-family: "Manrope", "Segoe UI", sans-serif;
 }
 
 code,
 pre {
-  font-family: "SkillNode Mono", monospace;
+  font-family: "JetBrains Mono", monospace;
 }
 
 .app-shell-bg {
@@ -151,8 +117,8 @@ pre {
 }
 
 .display-title {
-  font-family: "SkillNode Display", "SkillNode Sans", sans-serif;
-  letter-spacing: -0.04em;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  letter-spacing: -0.05em;
 }
 
 .glass-border {
