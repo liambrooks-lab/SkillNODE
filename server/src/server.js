@@ -95,7 +95,14 @@ server.listen(PORT, () => {
 });
 
 function getAllowedOrigins() {
+  const defaults = [
+    env.PUBLIC_APP_URL,
+    ...env.PUBLIC_APP_URLS.split(",").map((value) => value.trim()),
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+  ];
+
   return new Set(
-    [env.PUBLIC_APP_URL, ...env.PUBLIC_APP_URLS.split(",").map((value) => value.trim())].filter(Boolean),
+    defaults.filter(Boolean),
   );
 }

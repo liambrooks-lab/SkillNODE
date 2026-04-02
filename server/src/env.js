@@ -25,6 +25,8 @@ const parsedEnv = EnvSchema.parse(process.env);
 
 export const env = {
   ...parsedEnv,
-  publicAppUrlRegex: parsedEnv.PUBLIC_APP_URL_REGEX ? new RegExp(parsedEnv.PUBLIC_APP_URL_REGEX) : null,
+  publicAppUrlRegex: parsedEnv.PUBLIC_APP_URL_REGEX
+    ? new RegExp(parsedEnv.PUBLIC_APP_URL_REGEX)
+    : /^https:\/\/.*\.vercel\.app$/,
 };
 
