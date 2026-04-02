@@ -124,8 +124,8 @@ In development, if `RESEND_API_KEY` is missing and `ALLOW_DEV_LOGIN_CODE=true`, 
 
 ### Vercel
 
-- Import the repo and set the project Root Directory to `client`.
-- Vercel will pick up [vercel.json](F:/Projects/SkillNODE/client/vercel.json) for SPA route rewrites.
+- You can import the repo root directly now. The root [vercel.json](F:/Projects/SkillNODE/vercel.json) builds `client` and serves `client/dist`.
+- If you prefer setting the project Root Directory to `client`, Vercel will still pick up [vercel.json](F:/Projects/SkillNODE/client/vercel.json) for SPA route rewrites.
 - Add:
   - `VITE_API_BASE_URL=https://your-render-api.onrender.com`
 - Then redeploy.
@@ -140,7 +140,7 @@ Suggested preview-origin regex example for Render:
 
 - Create the Render blueprint.
 - Set the server env vars.
-- Create the Vercel project with root `client`.
+- Create the Vercel project.
 - Set `VITE_API_BASE_URL`.
 - Confirm that the Vercel URL is added to `PUBLIC_APP_URL`.
 - Test:
