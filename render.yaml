@@ -2,22 +2,18 @@ databases:
   - name: skillnode-db
     databaseName: skillnode
     user: skillnode
-    plan: starter
+    plan: free
 
 services:
   - type: web
     name: skillnode-api
     runtime: node
     rootDir: server
-    plan: starter
+    plan: free
     buildCommand: npm install && npm run prisma:generate
     preDeployCommand: npm run prisma:push
     startCommand: npm start
     healthCheckPath: /healthz
-    disk:
-      name: uploads
-      mountPath: /opt/render/project/src/server/uploads
-      sizeGB: 10
     envVars:
       - key: APP_ENV
         value: production
