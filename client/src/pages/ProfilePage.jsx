@@ -1,5 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Copy, MailCheck, MapPin, Phone, Save, Share2, Trophy, UserRound } from "lucide-react";
+import {
+  Copy,
+  Globe,
+  Link2,
+  MailCheck,
+  MapPin,
+  Phone,
+  Save,
+  Share2,
+  Trophy,
+  UserRound,
+} from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
@@ -19,6 +30,11 @@ function ProfileInner() {
     email: "",
     phone: "",
     region: "",
+    bio: "",
+    githubUrl: "",
+    linkedinUrl: "",
+    portfolioUrl: "",
+    xUrl: "",
   });
   const [dpFile, setDpFile] = useState(null);
 
@@ -28,6 +44,12 @@ function ProfileInner() {
   }, [dpFile, me?.dpUrl]);
 
   const shareUrl = me ? `${window.location.origin}/u/${me.id}` : "";
+  const socialRows = [
+    { key: "githubUrl", label: "GitHub", icon: Link2, placeholder: "https://github.com/username" },
+    { key: "linkedinUrl", label: "LinkedIn", icon: Link2, placeholder: "https://linkedin.com/in/username" },
+    { key: "portfolioUrl", label: "Portfolio", icon: Globe, placeholder: "https://your-portfolio.com" },
+    { key: "xUrl", label: "X / Twitter", icon: Globe, placeholder: "https://x.com/username" },
+  ];
 
   useEffect(() => {
     let alive = true;
@@ -43,6 +65,11 @@ function ProfileInner() {
           email: data.email || "",
           phone: data.phone || "",
           region: data.region || "",
+          bio: data.bio || "",
+          githubUrl: data.githubUrl || "",
+          linkedinUrl: data.linkedinUrl || "",
+          portfolioUrl: data.portfolioUrl || "",
+          xUrl: data.xUrl || "",
         });
       })
       .catch((err) => {
@@ -69,6 +96,11 @@ function ProfileInner() {
       form.append("email", draft.email.trim());
       form.append("phone", draft.phone.trim());
       form.append("region", draft.region.trim());
+      form.append("bio", draft.bio.trim());
+      form.append("githubUrl", draft.githubUrl.trim());
+      form.append("linkedinUrl", draft.linkedinUrl.trim());
+      form.append("portfolioUrl", draft.portfolioUrl.trim());
+      form.append("xUrl", draft.xUrl.trim());
       if (dpFile) form.append("dp", dpFile);
 
       const [profileRes, summaryRes] = await Promise.all([
@@ -85,6 +117,11 @@ function ProfileInner() {
         email: profileRes.data.email || "",
         phone: profileRes.data.phone || "",
         region: profileRes.data.region || "",
+        bio: profileRes.data.bio || "",
+        githubUrl: profileRes.data.githubUrl || "",
+        linkedinUrl: profileRes.data.linkedinUrl || "",
+        portfolioUrl: profileRes.data.portfolioUrl || "",
+        xUrl: profileRes.data.xUrl || "",
       });
       setDpFile(null);
       toast.push({ title: "Profile updated", message: "Your public card is now refreshed.", kind: "success" });
@@ -138,7 +175,7 @@ function ProfileInner() {
     <div className="space-y-6 pb-24">
       <div className="grid gap-4 xl:grid-cols-[0.85fr_1.15fr]">
         <Card className="overflow-hidden p-0">
-          <div className="h-28 bg-[linear-gradient(135deg,rgba(125,211,252,0.4),rgba(52,211,153,0.24),rgba(245,158,11,0.18))]" />
+          <div className="h-28 bg-[linear-gradient(135deg,rgba(125,211,252,0.28),rgba(139,230,207,0.18),rgba(255,255,255,0.08))]" />
           <div className="p-6">
             <div className="-mt-16 flex items-end gap-4">
               <div className="h-24 w-24 overflow-hidden rounded-[28px] border border-white/10 bg-slate-950">
@@ -163,7 +200,14 @@ function ProfileInner() {
               <MetaLine icon={MapPin} text={draft.region || "No region"} />
             </div>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 rounded-[22px] border border-white/10 bg-white/5 p-4">
+              <div className="text-xs uppercase tracking-[0.22em] text-white/45">Bio</div>
+              <div className="mt-3 text-sm leading-7 text-white/72">
+                {draft.bio || "Add a short bio to tell people what you do, what you enjoy, or what you are building."}
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <Button variant="secondary" className="gap-2" onClick={copyShareLink}>
                 <Copy size={16} />
                 Copy link
@@ -185,7 +229,7 @@ function ProfileInner() {
           <div className="hero-kicker">Profile Studio</div>
           <div className="mt-2 text-2xl font-semibold">Edit and polish your identity</div>
           <div className="mt-2 text-sm text-white/60">
-            Update your core details, swap the DP, and keep your public share card fresh.
+            Update your details, bio, and social presence so your public profile feels complete on desktop and mobile.
           </div>
 
           <form className="mt-6 space-y-5" onSubmit={saveProfile}>
@@ -205,6 +249,32 @@ function ProfileInner() {
               <Field label="Region" icon={MapPin}>
                 <Input value={draft.region} onChange={(e) => setDraft((prev) => ({ ...prev, region: e.target.value }))} required />
               </Field>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-[0.2em] text-white/50">
+                Bio
+              </label>
+              <textarea
+                value={draft.bio}
+                onChange={(e) => setDraft((prev) => ({ ...prev, bio: e.target.value }))}
+                placeholder="Write a short bio about yourself, your skills, or your goals."
+                maxLength={280}
+                className="min-h-28 w-full rounded-2xl border border-white/10 bg-[#0f1318] px-4 py-3 text-sm text-white placeholder:text-white/35 focus:border-white/25 focus:bg-[#131820] focus:outline-none"
+              />
+              <div className="mt-2 text-right text-xs text-white/40">{draft.bio.length}/280</div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {socialRows.map((social) => (
+                <Field key={social.key} label={social.label} icon={social.icon}>
+                  <Input
+                    value={draft[social.key]}
+                    onChange={(e) => setDraft((prev) => ({ ...prev, [social.key]: e.target.value }))}
+                    placeholder={social.placeholder}
+                  />
+                </Field>
+              ))}
             </div>
 
             <div>
@@ -236,19 +306,11 @@ function ProfileInner() {
 
       <div className="grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
         <Card className="p-6">
-          <div className="hero-kicker">Best Results</div>
-          <div className="mt-2 text-2xl font-semibold">What your public card can flex</div>
-          <div className="mt-5 space-y-3">
-            {(summary?.bestResults || []).map((result) => (
-              <div key={result.activityType} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="font-semibold capitalize">{result.activityType}</div>
-                  <div className="text-lg font-semibold">{formatScore(result.bestScore)}</div>
-                </div>
-                <div className="mt-2 text-sm text-white/58">
-                  {result.bestAccuracy != null ? `Best accuracy ${Math.round(result.bestAccuracy)}%` : "Score stored"}
-                </div>
-              </div>
+          <div className="hero-kicker">Social Links</div>
+          <div className="mt-2 text-2xl font-semibold">Your public touchpoints</div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {socialRows.map((social) => (
+              <SocialCard key={social.key} label={social.label} href={draft[social.key]} />
             ))}
           </div>
         </Card>
@@ -312,6 +374,23 @@ function StatChip({ label, value }) {
     <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
       <div className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</div>
       <div className="mt-2 text-2xl font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function SocialCard({ label, href }) {
+  return (
+    <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
+      <div className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</div>
+      <div className="mt-3 text-sm text-white/72 break-all">
+        {href ? (
+          <a href={href} target="_blank" rel="noreferrer" className="hover:text-white">
+            {href}
+          </a>
+        ) : (
+          "Not added yet"
+        )}
+      </div>
     </div>
   );
 }

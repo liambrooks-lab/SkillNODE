@@ -32,6 +32,11 @@ publicRouter.get("/users/:userId", async (req, res) => {
     phone: user.phone,
     region: user.region,
     dpUrl: user.dpUrl || null,
+    bio: user.bio || "",
+    githubUrl: user.githubUrl || "",
+    linkedinUrl: user.linkedinUrl || "",
+    portfolioUrl: user.portfolioUrl || "",
+    xUrl: user.xUrl || "",
     createdAt: user.createdAt,
     lastLoginAt: user.lastLoginAt,
     bestResults: bestResults.map((entry) => ({

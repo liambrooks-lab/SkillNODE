@@ -11,6 +11,11 @@ const UpdateProfileSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(5).max(30),
   region: z.string().min(1).max(80),
+  bio: z.string().max(280).optional().or(z.literal("")),
+  githubUrl: z.string().url().optional().or(z.literal("")),
+  linkedinUrl: z.string().url().optional().or(z.literal("")),
+  portfolioUrl: z.string().url().optional().or(z.literal("")),
+  xUrl: z.string().url().optional().or(z.literal("")),
 });
 
 meRouter.get("/", requireAuth, async (req, res) => {
@@ -77,7 +82,7 @@ meRouter.patch("/", requireAuth, upload.single("dp"), async (req, res) => {
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        ...parsed.data,
+        ...normalizeProfilePayload(parsed.data),
         ...(dpUrl ? { dpUrl } : {}),
       },
     });
@@ -100,7 +105,23 @@ function publicUser(user) {
     phone: user.phone,
     region: user.region,
     dpUrl: user.dpUrl || null,
+    bio: user.bio || "",
+    githubUrl: user.githubUrl || "",
+    linkedinUrl: user.linkedinUrl || "",
+    portfolioUrl: user.portfolioUrl || "",
+    xUrl: user.xUrl || "",
     createdAt: user.createdAt,
     lastLoginAt: user.lastLoginAt,
+  };
+}
+
+function normalizeProfilePayload(payload) {
+  return {
+    ...payload,
+    bio: payload.bio?.trim() || null,
+    githubUrl: payload.githubUrl?.trim() || null,
+    linkedinUrl: payload.linkedinUrl?.trim() || null,
+    portfolioUrl: payload.portfolioUrl?.trim() || null,
+    xUrl: payload.xUrl?.trim() || null,
   };
 }
