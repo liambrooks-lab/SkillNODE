@@ -1,6 +1,15 @@
 # SkillNODE
 
 SkillNODE is a multi-page skill development platform that blends competitive practice, social identity, AI-assisted learning, and lightweight multiplayer interaction into one product experience. It is designed to feel like a polished modern application rather than a collection of disconnected mini tools.
+---
+
+## 🔗 Live Demo
+
+👉 https://skill-node-client-bvoh.vercel.app/
+
+Experience the product live, explore features, and test different modules in real time.
+
+---
 
 The platform currently includes:
 - profile creation with display picture, bio, region, and social links
@@ -221,3 +230,15 @@ SkillNODE is structured as a serious product-oriented MVP. The codebase emphasiz
 - API-backed state instead of static-only pages
 - deployment-ready frontend and backend separation
 - product presentation suitable for portfolio, startup prototype, or further commercial evolution
+
+## 🤝 Support
+
+If you like this project or find it useful:
+
+⭐ Star the repository
+🐛 Report issues
+💡 Suggest features
+
+For collaboration:
+
+GitHub: https://github.com/liambrooks-lab
