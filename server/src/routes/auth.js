@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { createHash, randomInt } from "crypto";
+import { createHash, randomInt, randomUUID } from "crypto";
 import { z } from "zod";
 import { RateLimiterMemory } from "rate-limiter-flexible";
-import { prisma } from "../db/prisma.js";
 import { signToken } from "../auth/jwt.js";
 import { upload } from "../storage/uploads.js";
 import { sendLoginEmail, sendVerificationCodeEmail } from "../email/resend.js";
@@ -11,6 +10,12 @@ import { env } from "../env.js";
 export const authRouter = Router();
 
 const CHALLENGE_TTL_MINUTES = 10;
+
+// --- IN-MEMORY DATABASE MOCK ---
+// This safely stores your users and login OTPs in RAM instead of a database.
+const memoryUsers = new Map();
+const memoryChallenges = new Map();
+// -------------------------------
 
 const ProfileSchema = z.object({
   name: z.string().min(1).max(80),
@@ -34,8 +39,6 @@ const verifyLimiter = new RateLimiterMemory({
   duration: 60 * 10,
 });
 
-// Direct profile sign-in for the currently deployed MVP.
-// Email OTP remains available in the codebase for later re-enablement.
 authRouter.post("/login", upload.single("dp"), async (req, res) => {
   const parsed = ProfileSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -76,23 +79,26 @@ authRouter.post("/request-code", upload.single("dp"), async (req, res) => {
   const code = String(randomInt(100000, 1000000));
   const expiresAt = new Date(Date.now() + CHALLENGE_TTL_MINUTES * 60 * 1000);
 
-  await prisma.loginChallenge.deleteMany({
-    where: {
-      email,
-      consumedAt: null,
-    },
-  });
+  // Clear existing unused challenges for this email
+  for (const [key, challenge] of memoryChallenges.entries()) {
+    if (challenge.email === email && !challenge.consumedAt) {
+      memoryChallenges.delete(key);
+    }
+  }
 
-  await prisma.loginChallenge.create({
-    data: {
-      email,
-      name,
-      phone,
-      region,
-      dpUrl,
-      codeHash: hashCode(code),
-      expiresAt,
-    },
+  // Create new challenge
+  const challengeId = randomUUID();
+  memoryChallenges.set(challengeId, {
+    id: challengeId,
+    email,
+    name,
+    phone,
+    region,
+    dpUrl,
+    codeHash: hashCode(code),
+    expiresAt,
+    consumedAt: null,
+    createdAt: new Date(),
   });
 
   await sendVerificationCodeEmail({
@@ -124,14 +130,15 @@ authRouter.post("/verify-code", async (req, res) => {
     return res.status(429).json({ error: "Too many attempts. Wait a bit and try again." });
   }
 
-  const challenge = await prisma.loginChallenge.findFirst({
-    where: {
-      email,
-      consumedAt: null,
-      expiresAt: { gt: new Date() },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // Find the most recent active challenge
+  let challenge = null;
+  for (const val of memoryChallenges.values()) {
+    if (val.email === email && !val.consumedAt && val.expiresAt > new Date()) {
+      if (!challenge || val.createdAt > challenge.createdAt) {
+        challenge = val;
+      }
+    }
+  }
 
   if (!challenge) {
     return res.status(400).json({ error: "Verification code expired or unavailable." });
@@ -141,10 +148,9 @@ authRouter.post("/verify-code", async (req, res) => {
     return res.status(400).json({ error: "Incorrect verification code." });
   }
 
-  await prisma.loginChallenge.update({
-    where: { id: challenge.id },
-    data: { consumedAt: new Date() },
-  });
+  // Mark consumed
+  challenge.consumedAt = new Date();
+  memoryChallenges.set(challenge.id, challenge);
 
   const session = await upsertUserAndIssueSession({
     name: challenge.name,
@@ -164,24 +170,18 @@ authRouter.post("/verify-code", async (req, res) => {
 });
 
 async function upsertUserAndIssueSession({ name, phone, email, region, dpUrl }) {
-  const user = await prisma.user.upsert({
-    where: { email },
-    create: {
-      name,
-      phone,
-      email,
-      region,
-      dpUrl,
-      lastLoginAt: new Date(),
-    },
-    update: {
-      name,
-      phone,
-      region,
-      ...(dpUrl ? { dpUrl } : {}),
-      lastLoginAt: new Date(),
-    },
-  });
+  // Check if user exists in RAM, if not create them, if so update them
+  let user = memoryUsers.get(email);
+  if (!user) {
+    user = { id: randomUUID(), email, name, phone, region, dpUrl, lastLoginAt: new Date() };
+  } else {
+    user.name = name;
+    user.phone = phone;
+    user.region = region;
+    if (dpUrl) user.dpUrl = dpUrl;
+    user.lastLoginAt = new Date();
+  }
+  memoryUsers.set(email, user);
 
   const token = signToken({
     sub: user.id,
