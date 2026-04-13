@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { antiCheat } from "../lib/antiCheat";
-import { api } from "../lib/api";
+import { recordFairPlayEvent } from "../lib/localStore";
 import { useToast } from "../components/ui/Toast";
 
 export function useFairPlayMonitor(activityId) {
@@ -16,8 +16,10 @@ export function useFairPlayMonitor(activityId) {
         });
 
         try {
-          await api.post("/api/audit/event", {
+          recordFairPlayEvent({
             type: evt.type,
+            activityId,
+            message: evt.message,
             meta: { ...(evt.meta || {}), activityId },
           });
         } catch {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, BrainCircuit, ShieldCheck, Trophy, Users } from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
-import { api } from "../lib/api";
+import { getLeaderboard, getSummary } from "../lib/localStore";
 import { skillTracks } from "../data/skillTracks";
 import { resolveMediaUrl } from "../lib/media";
 
@@ -12,30 +12,15 @@ export function DashboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
-    let alive = true;
+    function syncDashboard() {
+      setSummary(getSummary());
+      setLeaderboard(getLeaderboard("typing", 5));
+    }
 
-    Promise.all([
-      api.get("/api/me/summary"),
-      api.get("/api/results/leaderboard", {
-        params: { activityType: "typing", take: 5 },
-      }),
-    ])
-      .then(([summaryRes, leaderboardRes]) => {
-        if (!alive) return;
-        setSummary(summaryRes.data);
-        setLeaderboard(leaderboardRes.data);
-      })
-      .catch(() => {
-        if (!alive) return;
-        setSummary({
-          totals: { totalAttempts: 0, alertCount: 0 },
-          bestResults: [],
-          recentResults: [],
-        });
-      });
-
+    syncDashboard();
+    window.addEventListener("focus", syncDashboard);
     return () => {
-      alive = false;
+      window.removeEventListener("focus", syncDashboard);
     };
   }, []);
 
@@ -53,8 +38,8 @@ export function DashboardPage() {
               One platform for skills, games, profiles, AI, and competition.
             </div>
             <div className="mt-4 max-w-2xl text-sm leading-7 text-white/65 md:text-base">
-              Your dashboard now reads from persistent backend data, so attempts, alerts, and best
-              scores survive refreshes and work across devices.
+              Your dashboard now reads from your local SkillNODE profile, so attempts, alerts, and
+              best scores stay fast and private on the device you are using.
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -105,7 +90,7 @@ export function DashboardPage() {
 
         <Card className="p-6">
           <div className="hero-kicker">Your Bests</div>
-          <div className="mt-2 text-2xl font-semibold">Saved to your profile</div>
+          <div className="mt-2 text-2xl font-semibold">Saved to your local profile</div>
           <div className="mt-5 space-y-3">
             {bestResults.map((result) => (
               <div key={result.activityType} className="rounded-[24px] border border-white/10 bg-white/5 p-4">

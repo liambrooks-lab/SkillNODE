@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
 import { RateLimiterMemory } from "rate-limiter-flexible";
-import { requireAuth } from "../middleware/auth.js";
 import { getOpenAI } from "../ai/openai.js";
 
 export const aiRouter = Router();
@@ -16,9 +15,15 @@ const HintSchema = z.object({
   prompt: z.string().min(1).max(800),
 });
 
-aiRouter.post("/hint", requireAuth, async (req, res) => {
+aiRouter.post("/hint", async (req, res) => {
+  const limiterKey =
+    req.headers["x-skillnode-session"]?.toString().slice(0, 120) ||
+    req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "guest";
+
   try {
-    await limiter.consume(req.auth.sub);
+    await limiter.consume(limiterKey);
   } catch {
     return res.status(429).json({ error: "Rate limited. Try again in a minute." });
   }

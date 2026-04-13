@@ -1,8 +1,8 @@
-import { api } from "./api";
+import { saveActivityResult } from "./localStore";
 
 export async function submitActivityResult(payload) {
   try {
-    await api.post("/api/results", payload);
+    saveActivityResult(payload);
   } catch {
     // Avoid breaking the gameplay flow on telemetry failures.
   }

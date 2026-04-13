@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MailCheck, MapPin, Phone, ShieldCheck, Sparkles, UploadCloud, UserRound } from "lucide-react";
@@ -6,8 +6,7 @@ import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { ToastProvider, useToast } from "../components/ui/Toast";
-import { api } from "../lib/api";
-import { setToken } from "../lib/auth";
+import { createSessionProfile, getSessionProfile } from "../lib/localStore";
 
 function LoginInner() {
   const toast = useToast();
@@ -21,6 +20,17 @@ function LoginInner() {
     region: "",
   });
 
+  useEffect(() => {
+    const profile = getSessionProfile();
+    if (!profile) return;
+    setForm({
+      name: profile.name || "",
+      phone: profile.phone || "",
+      email: profile.email || "",
+      region: profile.region || "",
+    });
+  }, []);
+
   const dpPreview = useMemo(() => {
     if (!dpFile) return null;
     return URL.createObjectURL(dpFile);
@@ -31,31 +41,26 @@ function LoginInner() {
     setBusy(true);
 
     try {
-      const payload = new FormData();
-      payload.append("name", form.name.trim());
-      payload.append("phone", form.phone.trim());
-      payload.append("email", form.email.trim());
-      payload.append("region", form.region.trim());
-      if (dpFile) payload.append("dp", dpFile);
-
-      const { data } = await api.post("/api/auth/login", payload, {
-        headers: { "Content-Type": "multipart/form-data" },
+      await createSessionProfile({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        region: form.region,
+        dpFile,
       });
-
-      setToken(data.token);
       toast.push({
         title: "Welcome to SkillNODE",
-        message: "Profile synced. You are in.",
+        message: "Your local skill profile is ready.",
         kind: "success",
       });
       navigate("/dashboard");
     } catch (err) {
-      const message =
-        err?.response?.data?.error ||
-        (err?.response?.status === 404 ? "Login service is not deployed yet." : null) ||
-        "Unable to sign in right now. Refresh once and try again.";
-
-      toast.push({ title: "Sign-in failed", message, kind: "error", durationMs: 4500 });
+      toast.push({
+        title: "Sign-in failed",
+        message: err?.message || "Unable to create your local profile right now.",
+        kind: "error",
+        durationMs: 4500,
+      });
     } finally {
       setBusy(false);
     }
@@ -93,7 +98,7 @@ function LoginInner() {
 
               <div className="grid max-w-xl gap-3">
                 <InfoRow icon={ShieldCheck} text="Typing, coding, math, grammar, reading, and multiplayer in one connected experience." />
-                <InfoRow icon={MailCheck} text="Clean onboarding with profile, display picture, and cross-device identity." />
+                <InfoRow icon={MailCheck} text="Clean onboarding with profile, display picture, and a fast local-first sign-in flow." />
               </div>
             </div>
           </motion.div>

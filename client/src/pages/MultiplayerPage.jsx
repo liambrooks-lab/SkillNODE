@@ -3,6 +3,7 @@ import { Radio, Send, Users, Zap } from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
+import { getSessionProfile } from "../lib/localStore";
 import { getSocket } from "../lib/socket";
 
 const roomPresets = [
@@ -15,7 +16,7 @@ const roomPresets = [
 export function MultiplayerPage() {
   const socket = useMemo(() => getSocket(), []);
   const [room, setRoom] = useState("lobby");
-  const [me, setMe] = useState("");
+  const [me, setMe] = useState(() => getSessionProfile()?.name || "");
   const [members, setMembers] = useState([]);
 
   useEffect(() => {

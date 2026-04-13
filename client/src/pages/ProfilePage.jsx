@@ -15,7 +15,12 @@ import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { ToastProvider, useToast } from "../components/ui/Toast";
-import { api } from "../lib/api";
+import {
+  encodePublicProfilePayload,
+  getSessionProfile,
+  getSummary,
+  updateSessionProfile,
+} from "../lib/localStore";
 import { resolveMediaUrl } from "../lib/media";
 
 function ProfileInner() {
@@ -43,7 +48,9 @@ function ProfileInner() {
     return resolveMediaUrl(me?.dpUrl);
   }, [dpFile, me?.dpUrl]);
 
-  const shareUrl = me ? `${window.location.origin}/u/${me.id}` : "";
+  const shareUrl = me
+    ? `${window.location.origin}/u/${me.id}?profile=${encodeURIComponent(encodePublicProfilePayload(me.id))}`
+    : "";
   const socialRows = [
     { key: "githubUrl", label: "GitHub", icon: Link2, placeholder: "https://github.com/username" },
     { key: "linkedinUrl", label: "LinkedIn", icon: Link2, placeholder: "https://linkedin.com/in/username" },
@@ -52,14 +59,13 @@ function ProfileInner() {
   ];
 
   useEffect(() => {
-    let alive = true;
-
-    Promise.all([api.get("/api/me"), api.get("/api/me/summary")])
-      .then(([meRes, summaryRes]) => {
-        if (!alive) return;
-        const data = meRes.data;
+    try {
+      const data = getSessionProfile();
+      if (!data) {
+        setError("No local profile found.");
+      } else {
         setMe(data);
-        setSummary(summaryRes.data);
+        setSummary(getSummary(data.id));
         setDraft({
           name: data.name || "",
           email: data.email || "",
@@ -71,18 +77,13 @@ function ProfileInner() {
           portfolioUrl: data.portfolioUrl || "",
           xUrl: data.xUrl || "",
         });
-      })
-      .catch((err) => {
-        if (!alive) return;
-        setError(err?.response?.data?.error || "Failed to load profile.");
-      })
-      .finally(() => {
-        if (alive) setLoading(false);
-      });
+      }
+    } catch (err) {
+      setError(err?.message || "Failed to load profile.");
+    } finally {
+      setLoading(false);
+    }
 
-    return () => {
-      alive = false;
-    };
   }, []);
 
   async function saveProfile(e) {
@@ -91,42 +92,28 @@ function ProfileInner() {
     setError("");
 
     try {
-      const form = new FormData();
-      form.append("name", draft.name.trim());
-      form.append("email", draft.email.trim());
-      form.append("phone", draft.phone.trim());
-      form.append("region", draft.region.trim());
-      form.append("bio", draft.bio.trim());
-      form.append("githubUrl", draft.githubUrl.trim());
-      form.append("linkedinUrl", draft.linkedinUrl.trim());
-      form.append("portfolioUrl", draft.portfolioUrl.trim());
-      form.append("xUrl", draft.xUrl.trim());
-      if (dpFile) form.append("dp", dpFile);
+      const profile = await updateSessionProfile({
+        ...draft,
+        dpFile,
+      });
 
-      const [profileRes, summaryRes] = await Promise.all([
-        api.patch("/api/me", form, {
-          headers: { "Content-Type": "multipart/form-data" },
-        }),
-        api.get("/api/me/summary"),
-      ]);
-
-      setMe(profileRes.data);
-      setSummary(summaryRes.data);
+      setMe(profile);
+      setSummary(getSummary(profile.id));
       setDraft({
-        name: profileRes.data.name || "",
-        email: profileRes.data.email || "",
-        phone: profileRes.data.phone || "",
-        region: profileRes.data.region || "",
-        bio: profileRes.data.bio || "",
-        githubUrl: profileRes.data.githubUrl || "",
-        linkedinUrl: profileRes.data.linkedinUrl || "",
-        portfolioUrl: profileRes.data.portfolioUrl || "",
-        xUrl: profileRes.data.xUrl || "",
+        name: profile.name || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        region: profile.region || "",
+        bio: profile.bio || "",
+        githubUrl: profile.githubUrl || "",
+        linkedinUrl: profile.linkedinUrl || "",
+        portfolioUrl: profile.portfolioUrl || "",
+        xUrl: profile.xUrl || "",
       });
       setDpFile(null);
-      toast.push({ title: "Profile updated", message: "Your public card is now refreshed.", kind: "success" });
+      toast.push({ title: "Profile updated", message: "Your local profile card is now refreshed.", kind: "success" });
     } catch (err) {
-      const message = err?.response?.data?.error || "Could not update profile.";
+      const message = err?.message || "Could not update profile.";
       setError(message);
       toast.push({ title: "Update failed", message, kind: "error" });
     } finally {
@@ -229,7 +216,7 @@ function ProfileInner() {
           <div className="hero-kicker">Profile Studio</div>
           <div className="mt-2 text-2xl font-semibold">Edit and polish your identity</div>
           <div className="mt-2 text-sm text-white/60">
-            Update your details, bio, and social presence so your public profile feels complete on desktop and mobile.
+            Update your details, bio, and social presence so your local-first SkillNODE profile feels complete on desktop and mobile.
           </div>
 
           <form className="mt-6 space-y-5" onSubmit={saveProfile}>

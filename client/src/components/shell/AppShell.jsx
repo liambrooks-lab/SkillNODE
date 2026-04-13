@@ -6,7 +6,7 @@ import { cn } from "../ui/cn";
 import { Button } from "../ui/Button";
 import { clearToken } from "../../lib/auth";
 import { ToastProvider, useToast } from "../ui/Toast";
-import { api } from "../../lib/api";
+import { getSessionProfile } from "../../lib/localStore";
 import { resolveMediaUrl } from "../../lib/media";
 import { closeSocket } from "../../lib/socket";
 
@@ -23,21 +23,22 @@ function ShellInner() {
   ];
 
   useEffect(() => {
-    let alive = true;
-
-    api
-      .get("/api/me")
-      .then(({ data }) => {
-        if (alive) setMe(data);
-      })
-      .catch(() => {
-        if (!alive) return;
+    function syncProfile() {
+      const profile = getSessionProfile();
+      if (!profile) {
         clearToken();
         navigate("/login", { replace: true });
-      });
+        return;
+      }
+      setMe(profile);
+    }
 
+    syncProfile();
+    window.addEventListener("storage", syncProfile);
+    window.addEventListener("focus", syncProfile);
     return () => {
-      alive = false;
+      window.removeEventListener("storage", syncProfile);
+      window.removeEventListener("focus", syncProfile);
     };
   }, [navigate]);
 
@@ -137,7 +138,7 @@ function ShellInner() {
                   <div className="hero-kicker">Professional Skill Platform</div>
                   <div className="display-title text-3xl">Level up, compete, connect.</div>
                   <div className="mt-2 max-w-2xl text-sm text-white/58">
-                    Cleaner surfaces, sharper hierarchy, and stronger product polish across the whole experience.
+                    Cleaner surfaces, sharper hierarchy, and a local-first experience that stays fast without waiting on account lookups.
                   </div>
                 </div>
               </div>

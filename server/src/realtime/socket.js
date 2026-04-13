@@ -14,18 +14,30 @@ function emitPresence(io, room) {
 
 export function attachRealtime(io) {
   io.use((socket, next) => {
-    try {
-      const token = socket.handshake.auth?.token;
-      if (!token) return next(new Error("Missing auth token"));
-      const decoded = verifyToken(token);
-      socket.data.userId = decoded.sub;
-      socket.data.profile = {
-        name: typeof decoded.name === "string" ? decoded.name.slice(0, 40) : "",
-      };
-      return next();
-    } catch {
-      return next(new Error("Invalid auth token"));
+    const token = socket.handshake.auth?.token;
+    const providedName =
+      typeof socket.handshake.auth?.name === "string" ? socket.handshake.auth.name.trim().slice(0, 40) : "";
+    const sessionId =
+      typeof socket.handshake.auth?.sessionId === "string" ? socket.handshake.auth.sessionId.trim().slice(0, 80) : "";
+
+    if (token) {
+      try {
+        const decoded = verifyToken(token);
+        socket.data.userId = decoded.sub;
+        socket.data.profile = {
+          name: typeof decoded.name === "string" ? decoded.name.slice(0, 40) : providedName,
+        };
+        return next();
+      } catch {
+        // Fall through to anonymous mode so realtime still works without auth tokens.
+      }
     }
+
+    socket.data.userId = sessionId || `guest_${Math.random().toString(36).slice(2, 10)}`;
+    socket.data.profile = {
+      name: providedName,
+    };
+    return next();
   });
 
   io.on("connection", (socket) => {

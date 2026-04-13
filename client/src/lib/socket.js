@@ -1,14 +1,15 @@
 import { io } from "socket.io-client";
 import { env } from "./env";
-import { getToken } from "./auth";
+import { getSessionProfile } from "./localStore";
 
 let socket = null;
 
 export function getSocket() {
-  const token = getToken();
+  const profile = getSessionProfile();
+  const socketIdentity = `${profile?.id || "guest"}:${profile?.name || ""}`;
 
   if (socket) {
-    if (socket.auth?.token === token) return socket;
+    if (socket.auth?.identity === socketIdentity) return socket;
     socket.disconnect();
     socket = null;
   }
@@ -16,7 +17,10 @@ export function getSocket() {
   socket = io(env.apiBaseUrl, {
     transports: ["websocket"],
     auth: {
-      token,
+      identity: socketIdentity,
+      token: "",
+      sessionId: profile?.id || "",
+      name: profile?.name || "",
     },
   });
 

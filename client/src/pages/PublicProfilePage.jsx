@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Globe, Link2, MapPin, MailCheck, MoveRight, Phone, Trophy } from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
-import { api } from "../lib/api";
+import { decodePublicProfilePayload, getPublicProfile } from "../lib/localStore";
 import { resolveMediaUrl } from "../lib/media";
 
 export function PublicProfilePage() {
   const { userId } = useParams();
+  const [searchParams] = useSearchParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
 
@@ -19,21 +20,19 @@ export function PublicProfilePage() {
   ];
 
   useEffect(() => {
-    let alive = true;
+    const shared = decodePublicProfilePayload(searchParams.get("profile"));
+    const local = getPublicProfile(userId);
+    const nextProfile = shared || local;
 
-    api
-      .get(`/api/public/users/${userId}`)
-      .then(({ data }) => {
-        if (alive) setProfile(data);
-      })
-      .catch((err) => {
-        if (alive) setError(err?.response?.data?.error || "Profile not found.");
-      });
+    if (nextProfile) {
+      setProfile(nextProfile);
+      setError("");
+      return;
+    }
 
-    return () => {
-      alive = false;
-    };
-  }, [userId]);
+    setProfile(null);
+    setError("This public profile link does not have shared data attached.");
+  }, [searchParams, userId]);
 
   return (
     <div className="app-shell-bg flex min-h-screen items-center px-4 py-8 md:px-6">
