@@ -1,6 +1,8 @@
-# SkillNODE
+## SkillNODE
+---
 
 SkillNODE is a multi-page skill development platform that blends competitive practice, social identity, AI-assisted learning, and lightweight multiplayer interaction into one product experience. It is designed to feel like a polished modern application rather than a collection of disconnected mini tools.
+
 ---
 
 ## 🔗 Live Demo
