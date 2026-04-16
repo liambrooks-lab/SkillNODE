@@ -220,7 +220,7 @@ SkillNODE is designed to be usable across desktop, tablet, and mobile devices. T
 ## 👨‍💻 Author
 
 **Rudranarayan Jena** 
- **GitHub:** [@liambrooks-lab](https://github.com/liambrooks-lab)  
+- **GitHub:** [@liambrooks-lab](https://github.com/liambrooks-lab)  
  ---
 
 ## Project Positioning
