@@ -215,14 +215,13 @@ SkillNODE is designed to be usable across desktop, tablet, and mobile devices. T
 - coding challenges currently run sample tests in-browser, not in a hardened remote judge
 - email OTP code paths exist in the backend, but the live sign-in flow is currently optimized for direct entry
 - free hosting constraints may affect persistent file storage and cold-start behavior
+---
 
-## Author
+## 👨‍💻 Author
 
-### Name
-Rudranarayan Jena
-
-### GitHub
-[liambrooks-lab](https://github.com/liambrooks-lab)
+**Rudranarayan Jena** 
+ **GitHub:** [@liambrooks-lab](https://github.com/liambrooks-lab)  
+ ---
 
 ## Project Positioning
 
