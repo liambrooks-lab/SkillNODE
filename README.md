@@ -1,83 +1,13 @@
-<p align="center">
-  <img src="client/public/logo-vortex.svg" alt="SkillNODE logo" width="120" />
-</p>
+# SkillNODE
 
-<p align="center">
-  A polished local-first skill platform for practice, competition, identity, AI-assisted learning, and lightweight multiplayer.
-</p>
-
-<p align="center">
-  <a href="https://skill-node-client-bvoh.vercel.app/">Live Product</a>
-  |
-  <a href="https://github.com/liambrooks-lab/SkillNODE">Repository</a>
-</p>
-
+SkillNODE is a multi-page skill development platform that blends competitive practice, social identity, AI-assisted learning, and lightweight multiplayer interaction into one product experience. It is designed to feel like a polished modern application rather than a collection of disconnected mini tools.
 ---
 
-## Overview
+## 🔗 Live Demo
 
-SkillNODE is a multi-page web product built to make skill building feel measurable, social, and premium instead of fragmented or boring. It combines structured practice modules, competitive scoring, profile building, AI hinting, fair-play monitoring, and realtime room presence in one product experience.
+👉 https://skill-node-client-bvoh.vercel.app/
 
-The latest release pushes SkillNODE further into a local-first product model:
-
-- users can enter the app without database-backed account lookup
-- profile identity, results, and fair-play signals are stored locally in the browser
-- public profile sharing works through embedded profile snapshots
-- math now includes Grade 11-12 level challenge questions
-- coding now includes a broader multi-language challenge library
-
----
-
-## What Is SkillNODE?
-
-SkillNODE is a professional skill development platform for:
-
-- students who want to train speed, logic, language, and quantitative ability
-- learners who want a clean personal profile around their progress
-- builders who want a product-style showcase instead of a simple practice page
-- teams or friends who want shared rooms and lightweight multiplayer energy
-
-At the product level, SkillNODE acts as:
-
-- a skill practice hub
-- a profile and identity layer
-- a challenge and competition layer
-- a local-first stats and performance tracker
-- an AI-assisted learning surface
-
----
-
-## Problem It Solves
-
-Most skill-practice websites break in the places that matter:
-
-- they feel like disconnected mini tools instead of one cohesive product
-- progress tracking is shallow or forgettable
-- profile and identity are missing
-- challenge difficulty often stays too basic
-- the UI feels functional but not premium
-
-SkillNODE is designed to solve that with a cleaner end-to-end workflow:
-
-1. enter the platform quickly
-2. build a visible player identity
-3. train across multiple skill tracks
-4. store results and alerts locally for speed and privacy
-5. share progress through a polished public profile
-6. stay inside one unified product experience
-
----
-
-## Why SkillNODE
-
-SkillNODE is built around a simple product promise:
-
-- train hard
-- measure real progress
-- compete without clutter
-- look professional while doing it
-
-The idea is not just to provide activities. It is to make the user feel like they are inside a serious modern product where practice, performance, identity, and collaboration belong together.
+Experience the product live, explore features, and test different modules in real time.
 
 ---
 
@@ -459,38 +389,35 @@ The latest SkillNODE release is local-first for user access. That means the main
 ## Current Limitations
 
 - screenshot detection on the web is best-effort only
-- JavaScript is the only coding track with direct in-browser test execution right now
-- other coding languages currently use guided review workflows rather than true remote execution
-- public share links omit locally stored image data to keep URLs usable
-- cold starts on free hosting can still affect backend-powered features
+- coding challenges currently run sample tests in-browser, not in a hardened remote judge
+- email OTP code paths exist in the backend, but the live sign-in flow is currently optimized for direct entry
+- free hosting constraints may affect persistent file storage and cold-start behavior
 
----
+## 👨‍💻 Author
 
-## Author
+### Name
+Rudranarayan Jena
 
-<p align="center">
-  <img src="docs/readme/author-rudranarayan-jena.jpg" alt="Rudranarayan Jena" width="180" />
-</p>
+### GitHub
+[liambrooks-lab](https://github.com/liambrooks-lab)
 
-<p align="center">
-  <strong>Crafted by Rudranarayan Jena</strong>
-</p>
+## Project Positioning
 
-<p align="center">
-  Product Builder | Full-stack Developer | UI-focused Web Creator
-</p>
+SkillNODE is structured as a serious product-oriented MVP. The codebase emphasizes:
+- modular route separation
+- reusable UI primitives
+- API-backed state instead of static-only pages
+- deployment-ready frontend and backend separation
+- product presentation suitable for portfolio, startup prototype, or further commercial evolution
 
-<p align="center">
-  GitHub: <a href="https://github.com/liambrooks-lab">@liambrooks-lab</a>
-</p>
+## 🤝 Support
 
----
+If you like this project or find it useful:
 
-## Support
+⭐ Star the repository
+🐛 Report issues
+💡 Suggest features
 
-If you like the project or want to build on top of it:
+For collaboration:
 
-- star the repository
-- open an issue
-- suggest feature ideas
-- connect through GitHub: [liambrooks-lab](https://github.com/liambrooks-lab)
+GitHub: https://github.com/liambrooks-lab
