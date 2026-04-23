@@ -1,7 +1,7 @@
 <p align="center">
   <img src="client/public/logo-vortex.svg" alt="SkillNODE logo" width="260" />
 </p>
-
+<h1 align="center">SkillNode</h1>
 <p align="center">
   A modern local-first skill platform built for serious practice, polished identity, premium UI, AI-assisted coaching, and multiplayer-ready product workflows.
 </p>
@@ -66,9 +66,9 @@ SkillNODE is built to solve that with a clearer workflow:
 
 ## 🔗 Links
 
-- **Live Product**: [https://skill-node-client-bvoh.vercel.app/](https://skill-node-client-bvoh.vercel.app/)
-- **Backend API**: [https://skillnode-api.onrender.com/healthz](https://skillnode-api.onrender.com/healthz)
-- **GitHub Repository**: [https://github.com/liambrooks-lab/SkillNODE](https://github.com/liambrooks-lab/SkillNODE)
+- **Live Product**:<a href="https://skill-node-client-bvoh.vercel.app/">View SkillNode Live</a>
+- **Backend API**: <a href="https://skillnode-api.onrender.com/healthz">Backend Health</a>
+- **GitHub Repository**: <a href="https://github.com/liambrooks-lab/SkillNODE">View GitHub Repository</a>
 
 ---
 
