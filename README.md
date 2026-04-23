@@ -1,183 +1,226 @@
-# SkillNODE
+<p align="center">
+  <img src="client/public/logo-vortex.svg" alt="SkillNODE logo" width="260" />
+</p>
 
-SkillNODE is a multi-page skill development platform that blends competitive practice, social identity, AI-assisted learning, and lightweight multiplayer interaction into one product experience. It is designed to feel like a polished modern application rather than a collection of disconnected mini tools.
----
+<p align="center">
+  A modern local-first skill platform built for serious practice, polished identity, premium UI, AI-assisted coaching, and multiplayer-ready product workflows.
+</p>
 
-## 🔗 Live Demo
-
-👉 https://skill-node-client-bvoh.vercel.app/
-
-Experience the product live, explore features, and test different modules in real time.
-
----
-
-## Use Cases
-
-- daily typing and accuracy practice
-- Grade 11-12 quantitative training
-- coding challenge preparation across multiple languages
-- grammar and comprehension practice
-- local-first progress tracking on personal devices
-- public profile sharing for portfolio-style presentation
-- casual multiplayer rooms for shared practice energy
+<p align="center">
+  <a href="https://skill-node-client-bvoh.vercel.app/">Live Product</a>
+  |
+  <a href="https://skillnode-api.onrender.com/healthz">Backend API</a>
+  |
+  <a href="https://github.com/liambrooks-lab/SkillNODE">Repository</a>
+</p>
 
 ---
 
-## Latest Product State
+## ✨ Overview
+
+SkillNODE is a full-stack web product designed to make skill development feel structured, social, and premium rather than scattered across unrelated mini tools. It combines a responsive multi-page interface, player identity, challenge-based practice, AI hint support, fair-play monitoring, local-first result storage, and multiplayer room presence into one cohesive product experience.
+
+The project is structured as a monorepo and split into:
+
+- a `React + Vite` frontend for the full product interface
+- an `Express` backend for AI hints, realtime presence, and future-ready service flows
+- shared deployment and workspace configuration at the repository root
+
+---
+
+## 🧭 What Is SkillNODE?
+
+SkillNODE is a browser-based skill development platform for learners, students, builders, and competitive users who want one polished place to train, measure progress, build a public profile, and stay inside a product that feels intentional.
+
+At the product level, SkillNODE acts as:
+
+- a skill lab for practice across multiple domains
+- a professional profile and identity layer
+- a challenge and performance tracking system
+- a local-first progress product that feels fast on every session
+- a lightweight multiplayer and AI-assisted learning surface
+
+---
+
+## 🩺 Problem It Solves
+
+Most skill-training websites break down where the real user experience starts:
+
+- they feel like disconnected practice pages instead of one serious product
+- profile and identity are weak or missing
+- progress tracking feels shallow
+- challenge difficulty often stays too easy
+- collaboration and social presence are treated as afterthoughts
+- the UI works, but it does not feel premium
+
+SkillNODE is built to solve that with a clearer workflow:
+
+- enter fast through a local-first flow
+- build a visible player identity
+- practice across focused skill modules
+- keep results and alerts close to the user for speed
+- share public presence with a polished profile page
+- extend into multiplayer and AI coaching without leaving the product
+
+---
+
+## 🔗 Links
+
+- **Live Product**: [https://skill-node-client-bvoh.vercel.app/](https://skill-node-client-bvoh.vercel.app/)
+- **Backend API**: [https://skillnode-api.onrender.com/healthz](https://skillnode-api.onrender.com/healthz)
+- **GitHub Repository**: [https://github.com/liambrooks-lab/SkillNODE](https://github.com/liambrooks-lab/SkillNODE)
+
+---
+
+## 🚀 Latest Product State
 
 SkillNODE currently ships with:
 
-- local-first login and player profile entry
+- a premium multi-page product shell with dashboard, activities, multiplayer, and profile flows
+- local-first login and player identity instead of mandatory database-backed access lookup
 - profile studio with display picture, bio, region, and four social links
-- public profile sharing through embedded share data
-- typing, math, guessing, coding, grammar, and comprehension tracks
-- advanced math question bank for higher-grade practice
-- multi-language coding challenge board for JavaScript, Python, C++, Java, TypeScript, and SQL
-- fair-play alerts stored locally in the user experience
-- realtime room presence for multiplayer-style flow
-- AI coaching hooks for selected challenge surfaces
+- public profile sharing through embedded share payloads
+- typing, math, guessing, coding, grammar, and comprehension modules
+- tougher Grade 11-12 level math questions instead of only basic arithmetic drills
+- a broader coding arena with JavaScript, Python, C++, Java, TypeScript, and SQL challenge tracks
+- fair-play alerts logged into the local user experience
+- realtime multiplayer room presence through Socket.IO
+- AI hints for supported challenge surfaces
 
 ---
 
-## Core Highlights
+## 🌌 Core Highlights
 
-- premium multi-page product UI
-- local-first identity with fast access flow
-- modern profile and public-sharing layer
-- challenge variety across logic, language, math, and code
-- broader coding question coverage than the initial release
-- responsive dashboard and product shell
-- contextual AI hints
-- fair-play monitoring for competitive flows
-- Render plus Vercel deployment structure
-
----
-
-## Product Workflow
-
-### 1. Enter SkillNODE
-
-The user opens the login page, adds profile details, optionally uploads a display picture, and enters the product instantly through a local-first flow.
-
-### 2. Build Identity
-
-The user opens the profile studio, updates bio and social links, and shapes a public-facing personal card.
-
-### 3. Train Across Skill Labs
-
-The user chooses a track such as typing, math, coding, grammar, comprehension, or guessing and starts a session.
-
-### 4. Track Results
-
-Each run stores performance in the local SkillNODE profile so dashboard summaries, best scores, recent sessions, and alerts remain fast and private on that device.
-
-### 5. Share Presence
-
-The user can generate a shareable public profile link with profile and performance context embedded into the shared route.
-
-### 6. Join Multiplayer Rooms
-
-The user can enter a live room, refresh presence, and prepare for collaborative or competitive product flows.
+- polished dashboard and app-shell design
+- local-first access flow for faster entry
+- professional player identity and public sharing
+- broader coding challenge coverage
+- advanced school-level math practice
+- contextual AI hint experience
+- realtime room presence layer
+- responsive layout for desktop and mobile
+- deployment-ready frontend and backend separation
 
 ---
 
-## Product Surface
+## 🧩 Product Surface
 
-### Dashboard
+### Dashboard experience
 
-- hero command center
-- best-score summaries
-- recent activity snapshots
-- featured tracks
-- local leaderboard layer
+- premium command center layout
+- stats, attempts, alerts, and category summaries
+- featured track cards
+- local-first leaderboard surface
 
-### Skill Labs
+### Skill lab experience
 
 - typing velocity
 - math clash
 - guess works
 - code arena
-- grammar practice
-- comprehension drills
+- grammar lab
+- comprehension practice
 
-### Profile Layer
+### Identity and social experience
 
-- display picture
-- name, phone, email, region
-- short bio
-- GitHub, LinkedIn, portfolio, and X links
-- public share route
+- player profile studio
+- public profile sharing
+- social links and bio
+- room presence and multiplayer entry
 
-### Social and Competition Layer
+### Coaching and integrity experience
 
-- multiplayer room presence
-- leaderboard shell
-- public identity pages
+- contextual AI hints
 - fair-play alerts
-
-### AI Layer
-
-- contextual hints inside challenge surfaces
-- lightweight coaching instead of heavy assistant clutter
+- product messaging around performance and accountability
 
 ---
 
-## Demo Gallery
+## 🖼️ Demo Gallery
 
 <table>
   <tr>
     <td width="50%" valign="top">
       <img src="docs/readme/demo-dashboard-hero.png" alt="SkillNODE dashboard hero" />
       <br />
-      <strong>1. Dashboard hero and command center</strong>
+      <strong>1. Dashboard hero</strong>
       <br />
-      The dashboard opens with a premium shell, product-level positioning, and a local-first summary surface for attempts, alerts, and entry points into the main experience.
+      The main dashboard opens with a premium command-center surface, local-first profile context, and product-level positioning around growth, competition, and connection.
     </td>
     <td width="50%" valign="top">
       <img src="docs/readme/demo-dashboard-tracks.png" alt="SkillNODE featured tracks" />
       <br />
-      <strong>2. Featured tracks and profile-aware layout</strong>
+      <strong>2. Featured tracks</strong>
       <br />
-      The product presents skill tracks as first-class modules rather than loose pages, helping users move quickly from identity into training.
+      SkillNODE organizes training into clear track cards so users move through the product like a real platform rather than a collection of random tools.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
       <img src="docs/readme/demo-dashboard-signals.png" alt="SkillNODE product signals" />
       <br />
-      <strong>3. Product signals and dashboard continuation</strong>
+      <strong>3. Product signals</strong>
       <br />
-      The lower dashboard continues the story with recent sessions, leaderboard space, AI positioning, social design, and fair-play messaging.
+      The lower dashboard shows recent sessions, leaderboard intent, AI positioning, social design, and fair-play messaging in one continuous interface.
     </td>
     <td width="50%" valign="top">
       <img src="docs/readme/demo-multiplayer.png" alt="SkillNODE multiplayer rooms" />
       <br />
-      <strong>4. Multiplayer room flow</strong>
+      <strong>4. Multiplayer rooms</strong>
       <br />
-      Users can pick a room, set a display name, and join a live presence layer designed to support future social and competitive gameplay expansion.
+      The multiplayer page gives users preset rooms, custom room entry, display names, and live presence, creating a clear base for future room-based competitions.
     </td>
   </tr>
   <tr>
-    <td width="50%" valign="top">
+    <td colspan="2" align="center" valign="top">
       <img src="docs/readme/demo-profile.png" alt="SkillNODE profile studio" />
       <br />
-      <strong>5. Profile studio and public identity</strong>
+      <strong>5. Profile studio</strong>
       <br />
-      The profile page combines public-card preview, editable personal details, bio, and social links in one professional account surface.
-    </td>
-    <td width="50%" valign="top">
-      <img src="docs/readme/author-rudranarayan-jena.jpg" alt="Rudranarayan Jena" />
-      <br />
-      <strong>6. Product author</strong>
-      <br />
-      SkillNODE is built as a portfolio-grade and product-grade release with clear visual direction, user identity, and scalable architecture goals.
+      The profile page combines editable identity, bio, social links, and a public-facing profile card so the platform feels personal and presentation-ready.
     </td>
   </tr>
 </table>
 
 ---
 
-## Tech Stack
+## 💡 Why SkillNODE
+
+SkillNODE is built around a simple product promise:
+
+- practice should feel structured
+- progress should feel measurable
+- identity should feel present
+- the product should look premium while staying usable
+
+The goal is not just to give users activities. It is to make them feel like they are inside one serious digital product where learning, competition, profile-building, and collaboration all belong together.
+
+---
+
+## 🌍 Language Support
+
+SkillNODE supports a broad range of challenge surfaces, and the coding arena now includes multiple language tracks for broader preparation.
+
+### Coding language tracks
+
+- JavaScript
+- Python
+- C++
+- Java
+- TypeScript
+- SQL
+
+### Non-coding skill tracks
+
+- typing
+- advanced math
+- word and number guessing
+- grammar
+- comprehension
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
 
@@ -186,8 +229,8 @@ The user can enter a live room, refresh presence, and prepare for collaborative 
 - React Router `7.13.2`
 - Framer Motion `12.38.0`
 - Axios `1.14.0`
-- Socket.IO Client `4.8.3`
 - Tailwind CSS `3.4.19`
+- Socket.IO Client `4.8.3`
 - Lucide React `1.7.0`
 
 ### Backend
@@ -201,14 +244,20 @@ The user can enter a live room, refresh presence, and prepare for collaborative 
 - JSON Web Token `9.0.2`
 - Multer `1.4.5-lts.2`
 
-### Deployment
+### Platform and deployment
 
-- Vercel for the frontend
-- Render for the backend service
+- Vercel for frontend hosting
+- Render for backend hosting
+
+### Monorepo tooling
+
+- npm workspaces
+- root-level shared scripts
+- deployment config via `render.yaml` and Vercel config
 
 ---
 
-## Repository Structure
+## 🧱 Monorepo Structure
 
 ```text
 SkillNODE/
@@ -235,47 +284,48 @@ SkillNODE/
 |  `- package.json
 |- docs/
 |  `- readme/
-|- render.yaml
+|- tests/
+|- docker-compose.yml
+|- LICENSE
 |- package.json
+|- render.yaml
 `- README.md
 ```
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ### Frontend responsibilities
 
-- onboarding and local-first profile entry
-- app shell, navigation, and responsive layouts
-- result storage and summary rendering
-- public profile sharing
-- activity experiences and challenge surfaces
-- realtime room UI
-- communication with optional backend features such as AI hints
+- onboarding and local-first session creation
+- app-shell navigation and responsive layouts
+- profile editing and public-sharing flows
+- challenge experiences across all skill tracks
+- local result storage and summary rendering
+- multiplayer room UI
+- communication with backend AI and realtime services
 
 ### Backend responsibilities
 
 - AI hint endpoint
-- realtime room presence via Socket.IO
-- email and legacy route scaffolding kept for future expansion
-- deployment-ready service structure for later product growth
+- realtime multiplayer presence
+- email and legacy auth scaffolding for future release paths
+- service foundation for further product expansion
 
-### Local-first release model
+### Execution flow
 
-In the current release, SkillNODE no longer requires a database-backed user lookup just to enter the app. The main user-facing flow now keeps:
-
-- identity in local browser storage
-- activity results in local browser storage
-- fair-play events in local browser storage
-
-This makes the product faster to enter and simpler to demo, while still allowing optional backend-powered features like AI hints and realtime presence.
+1. User opens SkillNODE.
+2. User enters profile information through the local-first login flow.
+3. User enters the dashboard and picks a skill track.
+4. Session results and fair-play events are stored locally for speed and privacy.
+5. Optional backend-powered features such as AI hints and room presence continue to work through the deployed service.
 
 ---
 
-## Validation Snapshot
+## ✅ Validation Snapshot
 
-Latest verified checks:
+The latest verified repo state includes:
 
 - `npm run build -w client` passing
 - `server/src/routes/ai.js` syntax check passing
@@ -283,12 +333,51 @@ Latest verified checks:
 
 ---
 
-## Local Setup
+## 🔐 Authentication and Identity
+
+- local-first player entry without mandatory database-backed access search
+- profile identity stored in browser storage for fast repeat usage
+- public profile sharing with embedded share data
+- backend auth and email scaffolding kept in the codebase for future extension
+
+---
+
+## 📦 Key Capabilities
+
+- polished premium UI
+- local-first access and stats flow
+- profile studio with social links and bio
+- public profile sharing
+- advanced math challenge set
+- multi-language coding arena
+- grammar and comprehension modules
+- multiplayer room presence
+- AI-assisted hints
+- mobile-friendly layout
+
+---
+
+## 🎯 Current Scope
+
+SkillNODE is built as a strong production-style MVP with:
+
+- a real product shell instead of a landing page
+- multiple dynamic pages and activity routes
+- a modern identity layer
+- local-first stats and session model
+- optional backend-assisted features
+- responsive design for desktop and mobile
+- deployment-ready structure for Vercel and Render
+
+---
+
+## 🧪 Local Setup
 
 ### Prerequisites
 
 - Node.js `22.x`
 - npm `10+`
+- PostgreSQL `15+` or Docker if you want legacy backend database routes available locally
 
 ### Install dependencies
 
@@ -296,12 +385,10 @@ Latest verified checks:
 npm install
 ```
 
-### Frontend environment
+### Start local PostgreSQL
 
-Create `client/.env`:
-
-```env
-VITE_API_BASE_URL=http://localhost:5000
+```bash
+docker-compose up -d postgres
 ```
 
 ### Backend environment
@@ -322,102 +409,122 @@ OPENAI_API_KEY=
 ALLOW_DEV_LOGIN_CODE=true
 ```
 
-### Run the product
+### Frontend environment
 
-Frontend only:
+Create `client/.env`:
 
-```bash
-npm run dev:client
+```env
+VITE_API_BASE_URL=http://localhost:5000
 ```
 
-Frontend plus backend:
+### Run backend
 
 ```bash
 npm run dev:server
+```
+
+### Run frontend
+
+```bash
 npm run dev:client
 ```
 
-### Default local URLs
+### Local URLs
 
-- frontend: `http://localhost:5173`
-- backend: `http://localhost:5000`
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5000`
 
 ---
 
-## Build Commands
+## 🏁 Build Commands
 
-### Frontend build
-
-```bash
-npm run build -w client
-```
-
-### Repository build
+### Build API helpers and frontend package set
 
 ```bash
 npm run build
 ```
 
-### Database push for legacy backend routes
+### Build web
 
 ```bash
-npm run db:push
+npm run build -w client
 ```
 
 ---
 
-## Deployment
+## 🌐 Deployment
 
 ### Frontend deployment
 
-- hosted on Vercel
+- hosted on `Vercel`
 - root directory: `client`
-- required variable: `VITE_API_BASE_URL`
 
 ### Backend deployment
 
-- hosted on Render
-- configuration file: `render.yaml`
-- used for AI hints, realtime presence, and future-ready backend expansion
+- hosted on `Render`
+- uses the Express backend from `server`
 
-### Important deployment note
+### Required frontend production variable
 
-The latest SkillNODE release is local-first for user access. That means the main app entry and user state do not depend on a database lookup, even though the backend service still exists for supported platform features.
+```env
+VITE_API_BASE_URL=https://skillnode-api.onrender.com
+```
+
+### Required backend production variables
+
+```env
+APP_ENV=production
+PORT=5000
+PUBLIC_APP_URL=https://skill-node-client-bvoh.vercel.app
+PUBLIC_APP_URLS=
+PUBLIC_APP_URL_REGEX=^https://.*\.vercel\.app$
+DATABASE_URL=your_postgres_connection_string
+JWT_SECRET=replace_me
+RESEND_API_KEY=replace_me
+RESEND_FROM=SkillNODE <your-verified-sender>
+OPENAI_API_KEY=replace_me
+ALLOW_DEV_LOGIN_CODE=false
+```
 
 ---
 
-## Current Limitations
+## 📄 License
 
-- screenshot detection on the web is best-effort only
-- coding challenges currently run sample tests in-browser, not in a hardened remote judge
-- email OTP code paths exist in the backend, but the live sign-in flow is currently optimized for direct entry
-- free hosting constraints may affect persistent file storage and cold-start behavior
+SkillNODE is protected under a custom restricted license.
+
+The full license text is available in [LICENSE](LICENSE).
+
+License summary:
+
+- copyright © 2026 Rudranarayan Jena
+- all rights reserved
+- no copying, modification, distribution, hosting, reuse, or derivative work without prior written permission
+- no commercial or non-commercial use is allowed unless explicitly approved by the author
+
+SkillNODE is not released as an open-source project under MIT, Apache, GPL, or any other permissive/public license.
+
+---
 
 ## 👨‍💻 Author
 
-### Name
-Rudranarayan Jena
+<p align="center">
+  <img src="docs/readme/author-rudranarayan-jena.jpg" alt="Rudranarayan Jena" width="180" />
+</p>
 
-### GitHub
-[liambrooks-lab](https://github.com/liambrooks-lab)
+<p align="center">
+  <strong>Crafted by MR. Rudranarayan Jena</strong>
+</p>
 
-## Project Positioning
+<p align="center">
+  Product Builder | Full-stack Developer | AI Enthusiast | Creator of SkillNODE
+</p>
 
-SkillNODE is structured as a serious product-oriented MVP. The codebase emphasizes:
-- modular route separation
-- reusable UI primitives
-- API-backed state instead of static-only pages
-- deployment-ready frontend and backend separation
-- product presentation suitable for portfolio, startup prototype, or further commercial evolution
+<p align="center">
+  Focused on building polished digital products, modern web applications, and user experiences that feel premium instead of generic.
+</p>
 
-## 🤝 Support
+<p align="center">
+  <a href="https://github.com/liambrooks-lab">GitHub: @liambrooks-lab</a>
+</p>
 
-If you like this project or find it useful:
-
-⭐ Star the repository
-🐛 Report issues
-💡 Suggest features
-
-For collaboration:
-
-GitHub: https://github.com/liambrooks-lab
+---
