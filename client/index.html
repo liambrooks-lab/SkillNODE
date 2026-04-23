@@ -1,12 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark-purple">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#11151b" />
+    <meta name="theme-color" content="#07070f" />
+    <meta name="description" content="SkillNODE — Train hard. Look sharp. The premium skill platform for typing, coding, math, grammar, and multiplayer competition." />
     <link rel="icon" type="image/svg+xml" href="/logo-vortex.svg" />
     <link rel="manifest" href="/manifest.json" />
     <title>SkillNODE | Skill Arena</title>
+    <script>
+      // Apply stored theme before first paint to avoid flash
+      try {
+        const t = localStorage.getItem("skillnode-theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch {}
+    </script>
   </head>
   <body class="bg-slate-950 text-slate-100">
     <div id="root"></div>

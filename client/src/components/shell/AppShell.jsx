@@ -1,189 +1,215 @@
 import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LayoutGrid, Swords, Trophy, UserCircle2, LogOut, ShieldCheck, Radio } from "lucide-react";
+import {
+  LayoutGrid, Swords, Trophy, UserCircle2, LogOut,
+  ShieldCheck, Radio, Zap,
+} from "lucide-react";
 import { cn } from "../ui/cn";
-import { Button } from "../ui/Button";
-import { clearToken } from "../../lib/auth";
+import { ThemeToggle } from "../ui/ThemeToggle";
+import { Avatar } from "../ui/Avatar";
 import { ToastProvider, useToast } from "../ui/Toast";
+import { clearToken } from "../../lib/auth";
 import { getSessionProfile } from "../../lib/localStore";
 import { resolveMediaUrl } from "../../lib/media";
 import { closeSocket } from "../../lib/socket";
+
+const NAV_ITEMS = [
+  { to: "/dashboard",  label: "Dashboard",  icon: LayoutGrid  },
+  { to: "/activities", label: "Skill Labs",  icon: Trophy      },
+  { to: "/multiplayer",label: "Multiplayer", icon: Swords      },
+  { to: "/profile",    label: "Profile",     icon: UserCircle2 },
+];
 
 function ShellInner() {
   const navigate = useNavigate();
   const toast = useToast();
   const [me, setMe] = useState(null);
 
-  const items = [
-    { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-    { to: "/activities", label: "Skill Labs", icon: Trophy },
-    { to: "/multiplayer", label: "Multiplayer", icon: Swords },
-    { to: "/profile", label: "Profile", icon: UserCircle2 },
-  ];
-
   useEffect(() => {
     function syncProfile() {
       const profile = getSessionProfile();
-      if (!profile) {
-        clearToken();
-        navigate("/login", { replace: true });
-        return;
-      }
+      if (!profile) { clearToken(); navigate("/login", { replace: true }); return; }
       setMe(profile);
     }
-
     syncProfile();
     window.addEventListener("storage", syncProfile);
-    window.addEventListener("focus", syncProfile);
+    window.addEventListener("focus",   syncProfile);
     return () => {
       window.removeEventListener("storage", syncProfile);
-      window.removeEventListener("focus", syncProfile);
+      window.removeEventListener("focus",   syncProfile);
     };
   }, [navigate]);
 
+  function handleSignOut() {
+    closeSocket();
+    clearToken();
+    toast.push({ title: "Signed out", message: "See you soon.", kind: "success" });
+    navigate("/login");
+  }
+
   return (
-    <div className="app-shell-bg">
-      <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-5 md:px-6">
-        <aside className="hidden w-72 shrink-0 lg:block">
-          <div className="sticky top-5 space-y-4">
-            <div className="rounded-[30px] border border-white/8 bg-[#151a20] p-5 shadow-[0_24px_60px_-42px_rgba(0,0,0,0.88)]">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <img src="/logo-vortex.svg" alt="SkillNODE logo" className="h-12 w-12 rounded-2xl" />
-                  <div>
-                    <div className="hero-kicker">SkillNODE</div>
-                    <div className="display-title text-2xl">Train Hard. Look Sharp.</div>
-                  </div>
-                </div>
-              </div>
+    <div className="app-shell">
+      {/* ── Sidebar ── */}
+      <aside className="sidebar" style={{ padding: "0" }}>
+        {/* Logo + branding */}
+        <div style={{
+          padding: "18px 16px 14px",
+          borderBottom: "1px solid var(--border-subtle)",
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <img src="/logo-vortex.svg" alt="SkillNODE" style={{ width: 36, height: 36, borderRadius: "8px" }} />
+            <div>
+              <div className="hero-kicker" style={{ fontSize: "0.65rem" }}>SkillNODE</div>
+              <div className="display-title" style={{ fontSize: "1rem", lineHeight: 1.2 }}>Train Hard.</div>
+            </div>
+          </div>
+        </div>
 
-              <div className="mt-5 rounded-[24px] border border-white/8 bg-[#101419] p-4">
-                <div className="text-xs uppercase tracking-[0.22em] text-white/40">Player</div>
-                <div className="mt-3 flex items-center gap-3">
-                  {me?.dpUrl ? (
-                    <img src={resolveMediaUrl(me.dpUrl)} alt={me.name} className="h-12 w-12 rounded-2xl object-cover" />
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/8 text-base font-semibold">
-                      {me?.name?.slice(0, 1)?.toUpperCase() || "S"}
-                    </div>
-                  )}
-                  <div>
-                    <div className="font-semibold">{me?.name || "Loading profile"}</div>
-                    <div className="text-sm text-white/55">{me?.region || "Syncing region"}</div>
-                  </div>
-                </div>
+        {/* Player card */}
+        <div style={{
+          margin: "12px 12px 8px",
+          padding: "12px",
+          background: "var(--surface-2)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: "10px",
+          flexShrink: 0,
+        }}>
+          <div className="label-sm" style={{ marginBottom: "8px" }}>Player</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Avatar
+              src={me?.dpUrl ? resolveMediaUrl(me.dpUrl) : null}
+              name={me?.name || "S"}
+              size="sm"
+            />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {me?.name || "Loading…"}
               </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-[22px] border border-white/8 bg-[#101419] p-3">
-                  <div className="flex items-center gap-2 text-white/55">
-                    <ShieldCheck size={15} className="text-[#8be6cf]" />
-                    Fair play
-                  </div>
-                  <div className="mt-2 text-lg font-semibold">Active</div>
-                </div>
-                <div className="rounded-[22px] border border-white/8 bg-[#101419] p-3">
-                  <div className="flex items-center gap-2 text-white/55">
-                    <Radio size={15} className="text-white/75" />
-                    Presence
-                  </div>
-                  <div className="mt-2 text-lg font-semibold">Live</div>
-                </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "1px" }}>
+                {me?.region || "Region"}
               </div>
             </div>
+          </div>
+          {/* Status pills */}
+          <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
+            <div style={{ flex: 1, padding: "6px 8px", background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "5px" }}>
+              <ShieldCheck size={12} style={{ color: "var(--accent)" }} />
+              <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600 }}>Fair play</span>
+            </div>
+            <div style={{ flex: 1, padding: "6px 8px", background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "5px" }}>
+              <span className="status-dot" style={{ width: 6, height: 6 }} />
+              <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600 }}>Live</span>
+            </div>
+          </div>
+        </div>
 
-            <nav className="rounded-[28px] border border-white/8 bg-[#151a20] p-2.5 shadow-[0_24px_60px_-42px_rgba(0,0,0,0.88)]">
-              {items.map((it) => (
-                <NavLink
-                  key={it.to}
-                  to={it.to}
-                  className={({ isActive }) =>
-                    cn(
-                      "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition",
-                      isActive
-                        ? "bg-[#f4f6f8] text-slate-950"
-                        : "text-white/72 hover:bg-white/6 hover:text-white",
-                    )
-                  }
-                >
-                  <it.icon size={18} className="opacity-85 group-hover:opacity-100" />
-                  <span className="font-medium">{it.label}</span>
-                </NavLink>
-              ))}
-            </nav>
-
-            <Button
-              variant="secondary"
-              className="w-full justify-start gap-2"
-              onClick={() => {
-                closeSocket();
-                clearToken();
-                toast.push({ title: "Signed out", message: "See you soon.", kind: "success" });
-                navigate("/login");
-              }}
+        {/* Navigation */}
+        <nav style={{ padding: "0 12px", flex: 1 }}>
+          <div className="label-sm" style={{ padding: "4px 4px 6px" }}>Navigation</div>
+          {NAV_ITEMS.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => cn("nav-item", isActive && "active")}
+              style={{ marginBottom: "2px" }}
             >
-              <LogOut size={18} />
-              Sign out
-            </Button>
-          </div>
-        </aside>
+              <item.icon size={17} />
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
 
-        <main className="min-w-0 flex-1">
-          <div className="rounded-[30px] border border-white/8 bg-[#151a20] px-5 py-4 shadow-[0_24px_60px_-42px_rgba(0,0,0,0.88)]">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
-                <img src="/logo-vortex.svg" alt="SkillNODE logo" className="hidden h-12 w-12 rounded-2xl md:block" />
-                <div>
-                  <div className="hero-kicker">Professional Skill Platform</div>
-                  <div className="display-title text-3xl">Level up, compete, connect.</div>
-                  <div className="mt-2 max-w-2xl text-sm text-white/58">
-                    Cleaner surfaces, sharper hierarchy, and a local-first experience that stays fast without waiting on account lookups.
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-3 text-sm">
-                <div className="rounded-[22px] border border-white/8 bg-[#101419] px-4 py-3">
-                  <div className="text-white/42">AI coach</div>
-                  <div className="mt-1 font-semibold">Contextual hints</div>
-                </div>
-                <div className="rounded-[22px] border border-white/8 bg-[#101419] px-4 py-3">
-                  <div className="text-white/42">Modes</div>
-                  <div className="mt-1 font-semibold">Solo + multiplayer</div>
-                </div>
-              </div>
+        {/* Sidebar footer */}
+        <div style={{
+          padding: "12px",
+          borderTop: "1px solid var(--border-subtle)",
+          flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}>
+          <ThemeToggle />
+          <button
+            onClick={handleSignOut}
+            className="btn btn-ghost"
+            style={{ width: "100%", justifyContent: "flex-start", gap: "8px", fontSize: "0.8rem" }}
+          >
+            <LogOut size={15} />
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main area ── */}
+      <div className="main-area">
+        {/* Slim top bar */}
+        <div className="top-bar">
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}>
+            <Zap size={15} style={{ color: "var(--accent)" }} />
+            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)" }}>
+              Professional Skill Platform
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{
+              fontSize: "0.72rem", fontWeight: 700,
+              padding: "3px 10px",
+              background: "var(--accent-dim)",
+              border: "1px solid var(--border)",
+              borderRadius: "6px",
+              color: "var(--accent-bright)",
+              letterSpacing: "0.06em",
+            }}>
+              <Radio size={10} style={{ display: "inline", marginRight: 4 }} />
+              LIVE
             </div>
           </div>
+        </div>
 
+        {/* Page content */}
+        <div className="page-frame">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            key="outlet"
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
-            className="page-shell mt-6"
+            transition={{ duration: 0.22 }}
+            className="flex-col-fill"
           >
             <Outlet />
           </motion.div>
-        </main>
+        </div>
       </div>
 
-      <nav className="fixed bottom-4 left-1/2 z-40 w-[min(560px,calc(100vw-2rem))] -translate-x-1/2 rounded-[28px] border border-white/8 bg-[#151a20] p-2.5 shadow-[0_24px_60px_-42px_rgba(0,0,0,0.88)] lg:hidden">
-        <div className="grid grid-cols-4 gap-2">
-          {items.map((it) => (
-            <NavLink
-              key={it.to}
-              to={it.to}
-              className={({ isActive }) =>
-                cn(
-                  "flex flex-col items-center justify-center gap-1 rounded-2xl py-2.5 text-xs transition",
-                  isActive ? "bg-[#f4f6f8] text-slate-950" : "text-white/60 hover:bg-white/6 hover:text-white",
-                )
-              }
-            >
-              <it.icon size={18} />
-              {it.label}
-            </NavLink>
-          ))}
-        </div>
+      {/* ── Mobile bottom nav ── */}
+      <nav style={{
+        display: "none",
+        position: "fixed",
+        bottom: 12,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 40,
+        background: "var(--sidebar-bg)",
+        border: "1px solid var(--border)",
+        borderRadius: "14px",
+        padding: "6px",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+      }}
+        className="mobile-nav"
+      >
+        {NAV_ITEMS.map(item => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) => cn("nav-item", isActive && "active")}
+            style={{ flexDirection: "column", gap: "2px", padding: "8px 12px", fontSize: "0.68rem" }}
+          >
+            <item.icon size={18} />
+            {item.label}
+          </NavLink>
+        ))}
       </nav>
     </div>
   );

@@ -1,219 +1,221 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BrainCircuit, ShieldCheck, Trophy, Users } from "lucide-react";
-import { Card } from "../components/ui/Card";
-import { Button } from "../components/ui/Button";
+import { ArrowRight, BrainCircuit, ShieldCheck, Users } from "lucide-react";
 import { getLeaderboard, getSummary } from "../lib/localStore";
 import { skillTracks } from "../data/skillTracks";
 import { resolveMediaUrl } from "../lib/media";
+import { Avatar } from "../components/ui/Avatar";
 
 export function DashboardPage() {
   const [summary, setSummary] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
-    function syncDashboard() {
+    function sync() {
       setSummary(getSummary());
-      setLeaderboard(getLeaderboard("typing", 5));
+      setLeaderboard(getLeaderboard("typing", 6));
     }
-
-    syncDashboard();
-    window.addEventListener("focus", syncDashboard);
-    return () => {
-      window.removeEventListener("focus", syncDashboard);
-    };
+    sync();
+    window.addEventListener("focus", sync);
+    return () => window.removeEventListener("focus", sync);
   }, []);
 
   const featuredTracks = skillTracks.slice(0, 4);
-  const bestResults = summary?.bestResults || [];
-  const recentResults = summary?.recentResults || [];
+  const bestResults    = summary?.bestResults    || [];
+  const recentResults  = summary?.recentResults  || [];
 
   return (
-    <div className="space-y-6 pb-24">
-      <Card className="overflow-hidden p-0">
-        <div className="grid gap-6 p-6 md:grid-cols-[1.2fr_0.8fr] md:p-8">
-          <div>
-            <div className="hero-kicker">Command Center</div>
-            <div className="display-title mt-2 max-w-3xl text-4xl md:text-5xl">
-              One platform for skills, games, profiles, AI, and competition.
-            </div>
-            <div className="mt-4 max-w-2xl text-sm leading-7 text-white/65 md:text-base">
-              Your dashboard now reads from your local SkillNODE profile, so attempts, alerts, and
-              best scores stay fast and private on the device you are using.
-            </div>
+    <div className="flex-col-fill" style={{ gap: 12 }}>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button as={Link} to="/activities">
-                Explore skill labs
-              </Button>
-              <Button as={Link} to="/multiplayer" variant="secondary">
-                Open multiplayer rooms
-              </Button>
-            </div>
-          </div>
+      {/* ── Row 1: Metrics ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, flexShrink: 0 }}>
+        <MetricBox label="Attempts" value={String(summary?.totals?.totalAttempts ?? 0)} />
+        <MetricBox label="Alerts"   value={String(summary?.totals?.alertCount ?? 0)} color="warning" />
+        <MetricBox label="Bests"    value={String(bestResults.length)} />
+        <MetricBox label="Leaders"  value={`${leaderboard.length} live`} color="accent" />
+      </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <MetricBox label="Attempts logged" value={String(summary?.totals?.totalAttempts ?? 0)} />
-            <MetricBox label="Fair-play alerts" value={String(summary?.totals?.alertCount ?? 0)} />
-            <MetricBox label="Best categories" value={String(bestResults.length)} />
-            <MetricBox label="Typing leaderboard" value={`${leaderboard.length} live`} />
-          </div>
-        </div>
-      </Card>
+      {/* ── Row 2: Tracks + Leaderboard ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 10, flex: 1, minHeight: 0 }}>
 
-      <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="p-6">
-          <div className="flex items-center justify-between gap-3">
+        {/* Track Cards grid */}
+        <div className="card" style={{ padding: "16px", display: "flex", flexDirection: "column", minHeight: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", flexShrink: 0 }}>
             <div>
-              <div className="hero-kicker">Featured Tracks</div>
-              <div className="mt-2 text-2xl font-semibold">Where most players start</div>
+              <div className="label-sm">Featured Tracks</div>
+              <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)", marginTop: "2px" }}>
+                Where most players start
+              </div>
             </div>
-            <Button as={Link} to="/activities" variant="ghost" className="gap-2">
-              See all
-              <ArrowRight size={16} />
-            </Button>
+            <Link
+              to="/activities"
+              className="btn btn-ghost btn-sm"
+              style={{ display: "flex", alignItems: "center", gap: "5px" }}
+            >
+              See all <ArrowRight size={13} />
+            </Link>
           </div>
 
-          <div className="mt-5 grid gap-4 md:grid-cols-2">
-            {featuredTracks.map((track) => (
-              <Link key={track.slug} to={track.route} className="group">
-                <div className="h-full rounded-[26px] border border-white/10 bg-slate-950/28 p-5 transition hover:-translate-y-0.5 hover:border-cyan-200/20 hover:bg-slate-950/38">
-                  <div className={`h-20 rounded-[20px] bg-gradient-to-br ${track.accent}`} />
-                  <div className="mt-4 text-xs uppercase tracking-[0.22em] text-white/45">{track.eyebrow}</div>
-                  <div className="mt-2 text-xl font-semibold">{track.title}</div>
-                  <div className="mt-2 text-sm text-white/62">{track.summary}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, flex: 1, minHeight: 0 }}>
+            {featuredTracks.map((track, i) => (
+              <Link key={track.slug} to={track.route} style={{ textDecoration: "none" }}>
+                <div
+                  className={`card animate-slide-up stagger-${i + 1}`}
+                  style={{ padding: "14px", height: "100%", cursor: "pointer" }}
+                >
+                  {/* Accent strip */}
+                  <div style={{
+                    height: "4px", borderRadius: "4px",
+                    background: "var(--btn-bg)",
+                    marginBottom: "10px",
+                    opacity: 0.7,
+                  }} />
+                  <div className="label-sm" style={{ marginBottom: "4px" }}>{track.eyebrow}</div>
+                  <div style={{ fontSize: "0.925rem", fontWeight: 700, color: "var(--text)", lineHeight: 1.3 }}>
+                    {track.title}
+                  </div>
+                  <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginTop: "5px", lineHeight: 1.5 }}>
+                    {track.summary}
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-6">
-          <div className="hero-kicker">Your Bests</div>
-          <div className="mt-2 text-2xl font-semibold">Saved to your local profile</div>
-          <div className="mt-5 space-y-3">
-            {bestResults.map((result) => (
-              <div key={result.activityType} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="font-semibold capitalize">{result.activityType}</div>
-                  <div className="text-lg font-semibold">{formatScore(result.bestScore)}</div>
-                </div>
-                <div className="mt-2 text-sm text-white/58">
-                  {result.bestAccuracy != null ? `Best accuracy ${Math.round(result.bestAccuracy)}%` : "Score tracked"}
-                </div>
-              </div>
-            ))}
-
-            {bestResults.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-8 text-sm text-white/45">
-                Start an activity to build your personal stats.
-              </div>
-            ) : null}
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
-        <Card className="p-6">
-          <div className="hero-kicker">Recent Results</div>
-          <div className="mt-2 text-2xl font-semibold">Latest saved sessions</div>
-          <div className="mt-5 space-y-3">
-            {recentResults.map((result) => (
-              <div key={result.id} className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="font-semibold capitalize">{result.activityType}</div>
-                  <div className="text-lg font-semibold">{formatScore(result.score)}</div>
-                </div>
-                <div className="mt-2 text-sm text-white/58">
-                  {result.accuracy != null ? `Accuracy ${Math.round(result.accuracy)}%` : "Accuracy not tracked"}
-                </div>
-              </div>
-            ))}
-            {recentResults.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-8 text-sm text-white/45">
-                No saved sessions yet.
-              </div>
-            ) : null}
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="hero-kicker">Typing Leaderboard</div>
-          <div className="mt-2 text-2xl font-semibold">Shared competition layer</div>
-          <div className="mt-5 space-y-3">
-            {leaderboard.map((entry) => (
-              <div key={entry.userId} className="flex items-center justify-between rounded-[24px] border border-white/10 bg-white/5 px-4 py-3">
-                <div className="flex items-center gap-3">
-                  {entry.dpUrl ? (
-                    <img src={resolveMediaUrl(entry.dpUrl)} alt={entry.name} className="h-11 w-11 rounded-2xl object-cover" />
-                  ) : (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 font-semibold">
-                      {entry.name.slice(0, 1).toUpperCase()}
+        {/* Leaderboard + Bests */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, minHeight: 0 }}>
+          {/* Leaderboard */}
+          <div className="card" style={{ padding: "16px", flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+            <div className="label-sm" style={{ marginBottom: "4px" }}>Typing Leaderboard</div>
+            <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: "10px" }}>
+              Shared competition layer
+            </div>
+            <div className="inner-scroll" style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
+              {leaderboard.length === 0 ? (
+                <EmptyState text="Results appear after your first typing session." />
+              ) : leaderboard.map((entry, i) => (
+                <div key={entry.userId} style={{
+                  display: "flex", alignItems: "center", gap: "10px",
+                  padding: "8px 10px",
+                  background: "var(--surface-2)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "8px",
+                }}>
+                  <span style={{
+                    width: 22, height: 22, borderRadius: "5px",
+                    background: i < 3 ? "var(--nav-active)" : "var(--surface)",
+                    border: "1px solid var(--border)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "0.7rem", fontWeight: 800,
+                    color: i < 3 ? "var(--nav-active-fg)" : "var(--text-faint)",
+                    flexShrink: 0,
+                  }}>
+                    {i + 1}
+                  </span>
+                  <Avatar
+                    src={entry.dpUrl ? resolveMediaUrl(entry.dpUrl) : null}
+                    name={entry.name}
+                    size="xs"
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "0.825rem", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {entry.name}
                     </div>
-                  )}
-                  <div>
-                    <div className="font-semibold">{entry.name}</div>
-                    <div className="text-sm text-white/55">{entry.region || "Region hidden"}</div>
+                    <div style={{ fontSize: "0.72rem", color: "var(--text-faint)" }}>{entry.region || "—"}</div>
+                  </div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--accent-bright)", flexShrink: 0 }}>
+                    {fmt(entry.bestScore)}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm text-white/45">#{entry.rank}</div>
-                  <div className="text-lg font-semibold">{formatScore(entry.bestScore)}</div>
-                </div>
-              </div>
-            ))}
-
-            {leaderboard.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-8 text-sm text-white/45">
-                Leaderboard will appear once results are submitted.
-              </div>
-            ) : null}
+              ))}
+            </div>
           </div>
-        </Card>
+
+          {/* Recent results */}
+          <div className="card" style={{ padding: "14px", flexShrink: 0 }}>
+            <div className="label-sm" style={{ marginBottom: "8px" }}>Recent Sessions</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+              {recentResults.length === 0 ? (
+                <EmptyState text="No sessions yet. Start an activity." />
+              ) : recentResults.slice(0, 3).map(r => (
+                <div key={r.id} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "6px 10px",
+                  background: "var(--surface-2)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "7px",
+                }}>
+                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text)", textTransform: "capitalize" }}>
+                    {r.activityType}
+                  </span>
+                  <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--accent-bright)" }}>
+                    {fmt(r.score)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <SignalCard
-          icon={BrainCircuit}
-          title="AI coaching in context"
-          copy="Hints are attached to the exact challenge surface, so the product feels useful instead of decorative."
-        />
-        <SignalCard
-          icon={Users}
-          title="Social by design"
-          copy="Profiles, rooms, and public sharing make the platform feel alive rather than isolated."
-        />
-        <SignalCard
-          icon={ShieldCheck}
-          title="Fair-play logging"
-          copy="Suspicious focus-loss and screenshot-key signals are logged against the authenticated account."
-        />
+      {/* ── Row 3: Signal cards ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, flexShrink: 0 }}>
+        <SignalCard icon={BrainCircuit} title="AI coaching in context"
+          copy="Hints are attached to each challenge surface so the product feels useful, not decorative." />
+        <SignalCard icon={Users} title="Social by design"
+          copy="Profiles, rooms, and public sharing make the platform feel alive rather than isolated." />
+        <SignalCard icon={ShieldCheck} title="Fair-play logging"
+          copy="Focus-loss, tab-switch, and key signals are logged against your active session." />
       </div>
+
     </div>
   );
 }
 
-function MetricBox({ label, value }) {
+/* ── Sub-components ── */
+
+function MetricBox({ label, value, color }) {
+  const textColor = color === "accent" ? "var(--accent-bright)"
+    : color === "warning" ? "#f59e0b"
+    : "var(--text)";
   return (
-    <div className="rounded-[26px] border border-white/10 bg-white/5 p-4">
-      <div className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</div>
-      <div className="mt-3 text-3xl font-semibold">{value}</div>
+    <div className="metric-box">
+      <div className="label-sm">{label}</div>
+      <div style={{ marginTop: "6px", fontSize: "1.75rem", fontWeight: 800, color: textColor, fontFamily: "Space Grotesk, Inter, sans-serif", letterSpacing: "-0.03em" }}>
+        {value}
+      </div>
     </div>
   );
 }
 
 function SignalCard({ icon: Icon, title, copy }) {
   return (
-    <Card className="p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-        <Icon size={18} className="text-cyan-200" />
+    <div className="card" style={{ padding: "14px", display: "flex", gap: "10px", alignItems: "flex-start" }}>
+      <div className="accent-block" style={{ width: 36, height: 36, borderRadius: "8px", flexShrink: 0 }}>
+        <Icon size={16} style={{ color: "var(--accent)" }} />
       </div>
-      <div className="mt-4 text-lg font-semibold">{title}</div>
-      <div className="mt-2 text-sm leading-6 text-white/62">{copy}</div>
-    </Card>
+      <div>
+        <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text)", lineHeight: 1.3 }}>{title}</div>
+        <div style={{ fontSize: "0.775rem", color: "var(--text-muted)", marginTop: "4px", lineHeight: 1.55 }}>{copy}</div>
+      </div>
+    </div>
   );
 }
 
-function formatScore(value) {
-  return Number.isFinite(value) ? Number(value).toFixed(value % 1 === 0 ? 0 : 1) : "0";
+function EmptyState({ text }) {
+  return (
+    <div style={{
+      padding: "20px 12px", textAlign: "center",
+      fontSize: "0.78rem", color: "var(--text-faint)",
+      border: "1px dashed var(--border-subtle)",
+      borderRadius: "8px",
+    }}>
+      {text}
+    </div>
+  );
+}
+
+function fmt(v) {
+  return Number.isFinite(v) ? Number(v).toFixed(v % 1 === 0 ? 0 : 1) : "0";
 }
