@@ -160,7 +160,7 @@ code,pre { font-family:"JetBrains Mono",monospace; }
 }
 
 /* ── App Layout ── */
-.app-shell { display:flex; height:100vh; overflow:hidden; background:var(--bg); position:relative; z-index:1; }
+.app-shell { display:flex; height:100vh; height:100dvh; overflow:hidden; background:var(--bg); position:relative; z-index:1; }
 
 .sidebar {
   width:248px; flex-shrink:0; height:100vh;
@@ -170,7 +170,7 @@ code,pre { font-family:"JetBrains Mono",monospace; }
   overflow:hidden;
 }
 
-.main-area { flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; min-width:0; }
+.main-area { flex:1; display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; min-width:0; }
 
 .top-bar {
   flex-shrink:0; height:52px;
@@ -182,11 +182,12 @@ code,pre { font-family:"JetBrains Mono",monospace; }
 }
 
 .page-frame {
-  flex:1; overflow:hidden;
+  flex:1; overflow-y:auto; overflow-x:hidden;
   padding:16px 20px;
   display:flex; flex-direction:column; gap:12px;
   min-height:0;
 }
+.page-frame > * { min-height:100%; }
 
 /* ── Cards ── */
 .card {
@@ -275,6 +276,7 @@ textarea.field { height:auto; padding:10px 12px; resize:vertical; }
   background:var(--surface-2);
   border:1px solid var(--border-subtle);
   border-radius:10px; flex-shrink:0;
+  overflow-x:auto;
 }
 .page-tab {
   flex:1; height:32px;
@@ -361,6 +363,123 @@ textarea.field { height:auto; padding:10px 12px; resize:vertical; }
 .h-full-safe { height:100%; min-height:0; }
 .flex-col-fill { display:flex; flex-direction:column; flex:1; min-height:0; }
 .avatar-ring { box-shadow:0 0 0 2px var(--accent),0 0 0 4px var(--accent-dim); }
+
+/* Multiplayer */
+.multiplayer-page { display:flex; flex-direction:column; gap:12px; }
+.multiplayer-hero {
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(280px,0.85fr);
+  gap:24px;
+  align-items:start;
+}
+.multiplayer-signal-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.multiplayer-main-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(320px,0.92fr);
+  gap:10px;
+  flex:1;
+  min-height:0;
+}
+.multiplayer-card {
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-height:0;
+}
+.multiplayer-presets {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.multiplayer-form-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.multiplayer-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.multiplayer-side-grid {
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:10px;
+  min-height:0;
+}
+.multiplayer-status-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.multiplayer-chat-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(220px,0.8fr);
+  gap:10px;
+  min-height:0;
+  flex:1;
+}
+.multiplayer-chat-panel,
+.multiplayer-members-panel {
+  min-height:0;
+}
+.multiplayer-chat-feed {
+  flex:1;
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.multiplayer-chat-form {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+}
+.multiplayer-meta-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.mobile-nav { display:none; }
+
+@media (max-width: 1100px) {
+  .multiplayer-main-grid,
+  .multiplayer-chat-layout,
+  .multiplayer-hero {
+    grid-template-columns:minmax(0,1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .sidebar { display:none; }
+  .mobile-nav { display:flex; }
+  .top-bar { padding:0 16px; }
+  .page-frame {
+    padding:12px 12px 92px;
+    -webkit-overflow-scrolling:touch;
+  }
+}
+
+@media (max-width: 720px) {
+  .multiplayer-signal-grid,
+  .multiplayer-presets,
+  .multiplayer-form-grid,
+  .multiplayer-meta-grid {
+    grid-template-columns:minmax(0,1fr);
+  }
+
+  .multiplayer-card { padding:18px; }
+  .multiplayer-chat-form { grid-template-columns:minmax(0,1fr); }
+  .multiplayer-actions .btn,
+  .multiplayer-chat-form .btn { width:100%; }
+}
 
 /* ── Global transitions ── */
 *, *::before, *::after {

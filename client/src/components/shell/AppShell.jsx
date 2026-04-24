@@ -184,7 +184,6 @@ function ShellInner() {
 
       {/* ── Mobile bottom nav ── */}
       <nav style={{
-        display: "none",
         position: "fixed",
         bottom: 12,
         left: "50%",
