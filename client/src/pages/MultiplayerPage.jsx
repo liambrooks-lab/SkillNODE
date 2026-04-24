@@ -7,10 +7,10 @@ import { getSessionProfile } from "../lib/localStore";
 import { getSocket } from "../lib/socket";
 
 const roomPresets = [
-  { id: "lobby", label: "Main lobby", copy: "General social room for casual presence." },
-  { id: "typing-race", label: "Typing race", copy: "Good for WPM battles and tournament rooms." },
-  { id: "code-duel", label: "Code duel", copy: "Room format for pair challenges and timed contests." },
-  { id: "study-squad", label: "Study squad", copy: "Shared practice room for grammar, reading, and math." },
+  { id: "lobby",       label: "Main lobby",   copy: "General social room for casual presence." },
+  { id: "typing-race", label: "Typing race",  copy: "Good for WPM battles and tournament rooms." },
+  { id: "code-duel",   label: "Code duel",    copy: "Room format for pair challenges and timed contests." },
+  { id: "study-squad", label: "Study squad",  copy: "Shared practice room for grammar, reading, and math." },
 ];
 
 export function MultiplayerPage() {
@@ -40,105 +40,138 @@ export function MultiplayerPage() {
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <Card className="p-6 md:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+    <div className="flex-col-fill" style={{ gap: 12 }}>
+
+      {/* ── Header card ── */}
+      <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
           <div>
-            <div className="hero-kicker">Multiplayer & Collaboration</div>
-            <div className="display-title mt-2 text-4xl md:text-5xl">
+            <div className="hero-kicker">Multiplayer &amp; Collaboration</div>
+            <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
               Real-time rooms for practice, play, and competitive energy.
             </div>
-            <div className="mt-4 max-w-3xl text-sm leading-7 text-white/63 md:text-base">
+            <div style={{ marginTop: 8, fontSize: "0.875rem", lineHeight: 1.75, color: "var(--text-muted)" }}>
               Live presence is already wired in. This page is the hub where typing races, coding
               duels, and study squads can all hang off the same social backbone.
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <MiniSignal icon={Radio} title="Presence" value={`${members.length} live`} />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <MiniSignal icon={Radio} title="Presence"     value={`${members.length} live`} />
             <MiniSignal icon={Users} title="Current room" value={room} />
-            <MiniSignal icon={Zap} title="Mode" value="Realtime ready" />
-            <MiniSignal icon={Send} title="Flow" value="Join / refresh" />
+            <MiniSignal icon={Zap}   title="Mode"         value="Realtime ready" />
+            <MiniSignal icon={Send}  title="Flow"         value="Join / refresh" />
           </div>
         </div>
       </Card>
 
-      <div className="grid gap-4 xl:grid-cols-[1fr_0.92fr]">
-        <Card className="p-6">
-          <div className="hero-kicker">Join A Room</div>
-          <div className="mt-2 text-2xl font-semibold">Choose a vibe, then hop in</div>
+      {/* ── Main grid ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 0.92fr", gap: 10, flex: 1, minHeight: 0 }}>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
+        {/* Left: Join A Room */}
+        <Card style={{ padding: 22, display: "flex", flexDirection: "column", gap: 16, minHeight: 0 }}>
+          <div>
+            <div className="hero-kicker" style={{ marginBottom: 2 }}>Join A Room</div>
+            <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" }}>
+              Choose a vibe, then hop in
+            </div>
+          </div>
+
+          {/* Preset buttons */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             {roomPresets.map((preset) => (
               <button
                 key={preset.id}
                 type="button"
-                className={`rounded-[24px] border p-4 text-left transition ${
-                  room === preset.id
-                    ? "border-cyan-200/30 bg-cyan-300/10"
-                    : "border-white/10 bg-white/5 hover:bg-white/10"
-                }`}
                 onClick={() => joinRoom(preset.id)}
+                style={{
+                  borderRadius: 10, padding: "12px 14px", textAlign: "left", cursor: "pointer",
+                  background: room === preset.id ? "var(--accent-dim)" : "var(--surface-2)",
+                  border: `1px solid ${room === preset.id ? "var(--border-hover)" : "var(--border-subtle)"}`,
+                  transition: "all 0.14s",
+                }}
               >
-                <div className="text-base font-semibold">{preset.label}</div>
-                <div className="mt-2 text-sm text-white/60">{preset.copy}</div>
+                <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--text)" }}>{preset.label}</div>
+                <div style={{ marginTop: 4, fontSize: "0.78rem", color: "var(--text-muted)", lineHeight: 1.5 }}>{preset.copy}</div>
               </button>
             ))}
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {/* Display name + custom room */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
-              <label className="mb-2 block text-xs font-medium uppercase tracking-[0.2em] text-white/50">
-                Display name
-              </label>
+              <div className="label-sm" style={{ marginBottom: 5 }}>Display name</div>
               <Input value={me} onChange={(e) => setMe(e.target.value)} placeholder="Your handle" />
             </div>
             <div>
-              <label className="mb-2 block text-xs font-medium uppercase tracking-[0.2em] text-white/50">
-                Custom room
-              </label>
+              <div className="label-sm" style={{ marginBottom: 5 }}>Custom room</div>
               <Input value={room} onChange={(e) => setRoom(e.target.value)} placeholder="lobby" />
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          {/* Actions */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             <Button onClick={() => joinRoom()}>Join / refresh room</Button>
-            <Button variant="secondary" onClick={() => socket.emit("leave_room", { room })}>
-              Leave room
-            </Button>
+            <Button variant="secondary" onClick={() => socket.emit("leave_room", { room })}>Leave room</Button>
+          </div>
+
+          {/* Info note */}
+          <div style={{
+            padding: "12px 14px",
+            background: "var(--surface-2)", border: "1px solid var(--border-subtle)",
+            borderRadius: 8, fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.65,
+          }}>
+            Next product step: attach room-specific gameplay events so typing races, code duels,
+            and study sessions all ride on the same realtime presence layer.
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="hero-kicker">Live Presence</div>
-          <div className="mt-2 text-2xl font-semibold">{members.length} currently online</div>
+        {/* Right: Live Presence */}
+        <Card style={{ padding: 22, display: "flex", flexDirection: "column", minHeight: 0 }}>
+          <div style={{ marginBottom: 12, flexShrink: 0 }}>
+            <div className="hero-kicker" style={{ marginBottom: 2 }}>Live Presence</div>
+            <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" }}>
+              {members.length} currently online
+            </div>
+          </div>
 
-          <div className="mt-5 space-y-3">
+          <div className="inner-scroll flex-col-fill" style={{ gap: 6, display: "flex", flexDirection: "column" }}>
             {members.map((member) => (
               <div
                 key={member.socketId}
-                className="flex items-center justify-between rounded-[24px] border border-white/10 bg-white/5 px-4 py-3"
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "10px 14px",
+                  background: "var(--surface-2)", border: "1px solid var(--border-subtle)",
+                  borderRadius: 8,
+                }}
               >
                 <div>
-                  <div className="font-semibold">{member.name || "Player"}</div>
-                  <div className="mt-1 text-xs uppercase tracking-[0.18em] text-white/45">Live room member</div>
+                  <div style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.875rem" }}>
+                    {member.name || "Player"}
+                  </div>
+                  <div style={{ marginTop: 1, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-faint)" }}>
+                    Live room member
+                  </div>
                 </div>
-                <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs text-emerald-100">
+                <div style={{
+                  padding: "2px 10px", borderRadius: 6, fontSize: "0.72rem", fontWeight: 700,
+                  background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.25)", color: "#4ade80",
+                }}>
                   {member.socketId.slice(0, 6)}
                 </div>
               </div>
             ))}
 
             {members.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-8 text-center text-sm text-white/50">
+              <div style={{
+                padding: "32px 16px", textAlign: "center",
+                border: "1px dashed var(--border-subtle)", borderRadius: 10,
+                fontSize: "0.85rem", color: "var(--text-faint)",
+              }}>
                 No one is in this room yet. Try another preset or wait for your friends to join.
               </div>
             ) : null}
-          </div>
-
-          <div className="mt-6 rounded-[24px] border border-white/10 bg-slate-950/28 p-4 text-sm text-white/62">
-            Next product step: attach room-specific gameplay events so typing races, code duels,
-            and study sessions all ride on the same realtime presence layer.
           </div>
         </Card>
       </div>
@@ -148,12 +181,16 @@ export function MultiplayerPage() {
 
 function MiniSignal({ icon: Icon, title, value }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-      <div className="flex items-center gap-2 text-sm text-white/55">
-        <Icon size={16} className="text-cyan-200" />
+    <div style={{
+      padding: "12px 14px",
+      background: "var(--surface-2)", border: "1px solid var(--border-subtle)",
+      borderRadius: 8,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.8rem", color: "var(--text-muted)" }}>
+        <Icon size={15} style={{ color: "var(--accent)" }} />
         {title}
       </div>
-      <div className="mt-3 text-xl font-semibold">{value}</div>
+      <div style={{ marginTop: 8, fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>{value}</div>
     </div>
   );
 }

@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Sparkles, Swords, Users } from "lucide-react";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { skillTracks } from "../data/skillTracks";
+
+const CATEGORIES = ["All", "Speed", "Logic", "Language", "Developer"];
+const TRACK_CATEGORY = {
+  typing: "Speed", math: "Logic", guess: "Logic",
+  code: "Developer", grammar: "Language", comprehension: "Language",
+};
 
 const labHighlights = [
   "Typing speed and rhythm testing",
@@ -14,33 +21,40 @@ const labHighlights = [
 ];
 
 export function ActivitiesPage() {
+  const [activeCat, setActiveCat] = useState("All");
+
+  const filtered = activeCat === "All"
+    ? skillTracks
+    : skillTracks.filter((t) => TRACK_CATEGORY[t.slug] === activeCat);
+
   return (
-    <div className="space-y-6 pb-24">
-      <Card className="p-6 md:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+    <div className="flex-col-fill" style={{ gap: 12 }}>
+
+      {/* ── Header card ── */}
+      <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Skill Labs</div>
-            <div className="display-title mt-2 text-4xl md:text-5xl">
+            <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
               Different dynamic pages for every kind of player.
             </div>
-            <div className="mt-4 max-w-3xl text-sm leading-7 text-white/64 md:text-base">
+            <div style={{ marginTop: 8, fontSize: "0.875rem", lineHeight: 1.75, color: "var(--text-muted)" }}>
               Each module below opens its own screen with its own interactions, stats, and flow.
-              That makes the platform feel like a real product suite instead of a single hero page
-              with buttons.
+              That makes the platform feel like a real product suite instead of a single hero page with buttons.
             </div>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button as={Link} to="/activities/code">
-                Open Code Arena
-              </Button>
-              <Button as={Link} to="/multiplayer" variant="secondary">
-                View social rooms
-              </Button>
+            <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <Button as={Link} to="/activities/code">Open Code Arena</Button>
+              <Button as={Link} to="/multiplayer" variant="secondary">View social rooms</Button>
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             {labHighlights.map((item) => (
-              <div key={item} className="rounded-[24px] border border-white/10 bg-white/5 p-4 text-sm text-white/68">
+              <div key={item} style={{
+                borderRadius: 8, border: "1px solid var(--border-subtle)",
+                background: "var(--surface-2)", padding: "10px 12px",
+                fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.55,
+              }}>
                 {item}
               </div>
             ))}
@@ -48,30 +62,58 @@ export function ActivitiesPage() {
         </div>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {skillTracks.map((track) => (
-          <Link key={track.slug} to={track.route} className="group">
-            <Card className="h-full p-5 transition group-hover:-translate-y-0.5 group-hover:border-cyan-200/20">
-              <div className={`h-24 rounded-[24px] bg-gradient-to-br ${track.accent}`} />
-              <div className="mt-4 flex items-start justify-between gap-3">
+      {/* ── Filter tabs ── */}
+      <div className="page-tabs" style={{ flexShrink: 0 }}>
+        {CATEGORIES.map((c) => (
+          <button
+            key={c}
+            className={`page-tab${activeCat === c ? " active" : ""}`}
+            onClick={() => setActiveCat(c)}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Track grid ── */}
+      <div
+        className="inner-scroll"
+        style={{
+          flex: 1, minHeight: 0,
+          display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 10, alignContent: "start",
+        }}
+      >
+        {filtered.map((track) => (
+          <Link key={track.slug} to={track.route} className="group" style={{ textDecoration: "none" }}>
+            <Card style={{ height: "100%", padding: "18px" }}>
+              <div style={{
+                height: 72, borderRadius: 8,
+                background: "var(--btn-bg)",
+                marginBottom: 14, opacity: 0.85,
+              }} />
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
                 <div>
-                  <div className="text-xs uppercase tracking-[0.22em] text-white/45">{track.eyebrow}</div>
-                  <div className="mt-2 text-xl font-semibold">{track.title}</div>
+                  <div className="label-sm" style={{ marginBottom: 4 }}>{track.eyebrow}</div>
+                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>{track.title}</div>
                 </div>
-                <ArrowUpRight size={18} className="text-white/45 transition group-hover:text-white" />
+                <ArrowUpRight size={17} style={{ color: "var(--text-faint)", flexShrink: 0, marginTop: 2 }} />
               </div>
-              <div className="mt-3 text-sm leading-6 text-white/62">{track.summary}</div>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/55">
-                <span className="rounded-full border border-white/10 px-3 py-1">{track.duration}</span>
-                <span className="rounded-full border border-white/10 px-3 py-1">{track.multiplayer}</span>
-                <span className="rounded-full border border-white/10 px-3 py-1">{track.ai}</span>
+              <div style={{ marginTop: 8, fontSize: "0.825rem", lineHeight: 1.6, color: "var(--text-muted)" }}>
+                {track.summary}
+              </div>
+              <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {[track.duration, track.multiplayer, track.ai].map((tag) => (
+                  <span key={tag} className="badge">{tag}</span>
+                ))}
               </div>
             </Card>
           </Link>
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      {/* ── Promo row ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, flexShrink: 0 }}>
         <PromoCard
           icon={Sparkles}
           title="AI hints where they matter"
@@ -94,12 +136,14 @@ export function ActivitiesPage() {
 
 function PromoCard({ icon: Icon, title, copy }) {
   return (
-    <Card className="p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-        <Icon size={18} className="text-cyan-200" />
+    <Card style={{ padding: 16, display: "flex", gap: 12, alignItems: "flex-start" }}>
+      <div className="accent-block" style={{ width: 36, height: 36, borderRadius: 8, flexShrink: 0 }}>
+        <Icon size={16} style={{ color: "var(--accent)" }} />
       </div>
-      <div className="mt-4 text-lg font-semibold">{title}</div>
-      <div className="mt-2 text-sm leading-6 text-white/62">{copy}</div>
+      <div>
+        <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text)" }}>{title}</div>
+        <div style={{ marginTop: 4, fontSize: "0.775rem", lineHeight: 1.6, color: "var(--text-muted)" }}>{copy}</div>
+      </div>
     </Card>
   );
 }

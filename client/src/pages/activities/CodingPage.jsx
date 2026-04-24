@@ -251,12 +251,12 @@ function CodingInner() {
     () => language.challenges.find((item) => item.id === challengeId) || language.challenges[0],
     [challengeId, language],
   );
-  const [code, setCode] = useState(LANGUAGE_TRACKS[0].challenges[0].starter);
+  const [code, setCode]       = useState(LANGUAGE_TRACKS[0].challenges[0].starter);
   const [results, setResults] = useState([]);
-  const [aiBusy, setAiBusy] = useState(false);
+  const [aiBusy, setAiBusy]  = useState(false);
 
   function selectLanguage(nextId) {
-    const nextLanguage = LANGUAGE_TRACKS.find((item) => item.id === nextId) || LANGUAGE_TRACKS[0];
+    const nextLanguage  = LANGUAGE_TRACKS.find((item) => item.id === nextId) || LANGUAGE_TRACKS[0];
     const nextChallenge = nextLanguage.challenges[0];
     setLanguageId(nextLanguage.id);
     setChallengeId(nextChallenge.id);
@@ -281,11 +281,7 @@ function CodingInner() {
         actual: "Check your code against this review target.",
       }));
       setResults(reviewRows);
-      toast.push({
-        title: "Review checklist ready",
-        message: `${language.label} challenge opened with guided evaluation points.`,
-        kind: "info",
-      });
+      toast.push({ title: "Review checklist ready", message: `${language.label} challenge opened with guided evaluation points.`, kind: "info" });
       return;
     }
 
@@ -300,7 +296,7 @@ function CodingInner() {
 
       const nextResults = challenge.tests.map((test, index) => {
         const actual = fn(...test.args);
-        const pass = deepEqual(actual, test.expected);
+        const pass   = deepEqual(actual, test.expected);
         return {
           id: `${challenge.id}-${index}`,
           label: `Test ${index + 1}`,
@@ -311,7 +307,7 @@ function CodingInner() {
       });
 
       setResults(nextResults);
-      const passed = nextResults.filter((item) => item.state === "pass").length;
+      const passed   = nextResults.filter((item) => item.state === "pass").length;
       const accuracy = Number(((passed / nextResults.length) * 100).toFixed(2));
 
       if (passed > 0) {
@@ -319,12 +315,7 @@ function CodingInner() {
           activityType: "coding",
           score: accuracy,
           accuracy,
-          metadata: {
-            language: language.id,
-            challengeId: challenge.id,
-            passed,
-            totalTests: nextResults.length,
-          },
+          metadata: { language: language.id, challengeId: challenge.id, passed, totalTests: nextResults.length },
         });
       }
 
@@ -334,15 +325,7 @@ function CodingInner() {
         kind: passed === nextResults.length ? "success" : "warning",
       });
     } catch (err) {
-      setResults([
-        {
-          id: "runtime-error",
-          label: "Runtime error",
-          state: "fail",
-          expected: "Valid function output",
-          actual: err.message,
-        },
-      ]);
+      setResults([{ id: "runtime-error", label: "Runtime error", state: "fail", expected: "Valid function output", actual: err.message }]);
       toast.push({ title: "Code error", message: err.message, kind: "error" });
     }
   }
@@ -362,176 +345,197 @@ function CodingInner() {
       });
       toast.push({ title: "AI hint", message: data.hint, kind: "info", durationMs: 6000 });
     } catch (err) {
-      toast.push({
-        title: "AI hint unavailable",
-        message: err?.response?.data?.error || "Configure OPENAI_API_KEY on the server.",
-        kind: "warning",
-      });
+      toast.push({ title: "AI hint unavailable", message: err?.response?.data?.error || "Configure OPENAI_API_KEY on the server.", kind: "warning" });
     } finally {
       setAiBusy(false);
     }
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <Card className="p-6 md:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+    <div className="flex-col-fill" style={{ gap: 12 }}>
+
+      {/* ── Header card ── */}
+      <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Code Arena</div>
-            <div className="display-title mt-2 text-4xl md:text-5xl">
+            <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
               Multi-language challenges with stronger depth.
             </div>
-            <div className="mt-4 max-w-3xl text-sm leading-7 text-white/63 md:text-base">
-              The coding round now covers JavaScript, Python, C++, Java, TypeScript, and SQL.
+            <div style={{ marginTop: 8, fontSize: "0.875rem", lineHeight: 1.75, color: "var(--text-muted)" }}>
+              The coding round covers JavaScript, Python, C++, Java, TypeScript, and SQL.
               JavaScript runs local sample tests; the other tracks ship with serious prompts,
               starter templates, constraints, and review checkpoints for broader practice.
             </div>
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Tile icon={Code2} label="Languages" value={String(LANGUAGE_TRACKS.length)} />
-            <Tile
-              icon={Play}
-              label="Challenges"
-              value={String(LANGUAGE_TRACKS.reduce((sum, item) => sum + item.challenges.length, 0))}
-            />
-            <Tile icon={Bug} label="Mode" value={language.runtime} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+            <Tile icon={Code2} label="Languages"  value={String(LANGUAGE_TRACKS.length)} />
+            <Tile icon={Play}  label="Challenges" value={String(LANGUAGE_TRACKS.reduce((s, t) => s + t.challenges.length, 0))} />
+            <Tile icon={Bug}   label="Mode"       value={language.runtime} />
           </div>
         </div>
       </Card>
 
-      <Card className="p-6">
-        <div className="flex flex-wrap gap-3">
-          {LANGUAGE_TRACKS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`rounded-full border px-4 py-2 text-sm transition ${
-                item.id === language.id
-                  ? "border-cyan-200/30 bg-cyan-300/10 text-white"
-                  : "border-white/10 bg-white/5 text-white/65 hover:bg-white/10"
-              }`}
-              onClick={() => selectLanguage(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </Card>
+      {/* Language tabs */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, flexShrink: 0 }}>
+        {LANGUAGE_TRACKS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => selectLanguage(item.id)}
+            style={{
+              padding: "6px 16px", borderRadius: 6, fontSize: "0.825rem", fontWeight: 600,
+              cursor: "pointer",
+              background: item.id === language.id ? "var(--accent-dim)" : "var(--surface-2)",
+              border: `1px solid ${item.id === language.id ? "var(--border-hover)" : "var(--border-subtle)"}`,
+              color: item.id === language.id ? "var(--text)" : "var(--text-muted)",
+              transition: "all 0.12s",
+            }}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="p-6">
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {/* ── Main grid ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 10, flex: 1, minHeight: 0 }}>
+
+        {/* Left: editor panel */}
+        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, minHeight: 0, overflow: "hidden" }}>
+          {/* Challenge selector */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8, flexShrink: 0 }}>
             {language.challenges.map((item) => (
               <button
                 key={item.id}
                 type="button"
-                className={`rounded-[24px] border p-4 text-left transition ${
-                  item.id === challenge.id
-                    ? "border-cyan-200/30 bg-cyan-300/10"
-                    : "border-white/10 bg-white/5 hover:bg-white/10"
-                }`}
                 onClick={() => selectChallenge(item.id)}
+                style={{
+                  padding: "10px 12px", borderRadius: 8, textAlign: "left", cursor: "pointer",
+                  background: item.id === challenge.id ? "var(--accent-dim)" : "var(--surface-2)",
+                  border: `1px solid ${item.id === challenge.id ? "var(--border-hover)" : "var(--border-subtle)"}`,
+                  transition: "all 0.12s",
+                }}
               >
-                <div className="text-xs uppercase tracking-[0.18em] text-white/45">{item.difficulty}</div>
-                <div className="mt-2 text-base font-semibold">{item.title}</div>
-                <div className="mt-2 text-sm text-white/60">{item.description}</div>
+                <div className="label-sm" style={{ marginBottom: 3 }}>{item.difficulty}</div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--text)" }}>{item.title}</div>
+                <div style={{ marginTop: 4, fontSize: "0.78rem", color: "var(--text-muted)", lineHeight: 1.4 }}>{item.description}</div>
               </button>
             ))}
           </div>
 
-          <div className="mt-6 rounded-[28px] border border-white/10 bg-slate-950/28 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Challenge detail */}
+          <div style={{
+            padding: "14px 16px", flexShrink: 0,
+            background: "var(--surface-2)", border: "1px solid var(--border-subtle)", borderRadius: 10,
+          }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 8 }}>
               <div>
-                <div className="text-xs uppercase tracking-[0.22em] text-white/45">
-                  {language.label} | {challenge.difficulty}
-                </div>
-                <div className="mt-2 text-2xl font-semibold">{challenge.title}</div>
+                <div className="label-sm">{language.label} | {challenge.difficulty}</div>
+                <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginTop: 2 }}>{challenge.title}</div>
               </div>
-              <Button variant="secondary" onClick={() => setCode(challenge.starter)}>
-                Reset starter
-              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setCode(challenge.starter)}>Reset starter</Button>
             </div>
-            <div className="mt-3 text-sm leading-7 text-white/62">{challenge.description}</div>
-
+            <div style={{ fontSize: "0.85rem", lineHeight: 1.65, color: "var(--text-muted)" }}>{challenge.description}</div>
             {challenge.constraints?.length ? (
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 5 }}>
                 {challenge.constraints.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/58"
-                  >
-                    {item}
-                  </div>
+                  <span key={item} className="badge">{item}</span>
                 ))}
               </div>
             ) : null}
           </div>
 
+          {/* Code area */}
           <textarea
-            className="mt-5 h-[420px] w-full resize-none rounded-[28px] border border-white/10 bg-[#07111f] p-5 text-sm leading-7 text-sky-100 placeholder:text-white/28 focus:border-sky-300/60 focus:outline-none"
+            className="inner-scroll"
+            style={{
+              flex: 1, resize: "none",
+              background: "var(--surface-3)", border: "1px solid var(--border)",
+              borderRadius: 10, padding: "14px 16px",
+              fontFamily: "JetBrains Mono, monospace", fontSize: "0.85rem", lineHeight: 1.7,
+              color: "var(--text)", caretColor: "var(--accent)",
+              outline: "none", minHeight: 0,
+            }}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             spellCheck={false}
           />
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Button className="gap-2" onClick={runTests}>
-              <Play size={16} />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, flexShrink: 0 }}>
+            <Button style={{ gap: 6 }} onClick={runTests}>
+              <Play size={14} />
               {challenge.functionName ? "Run local tests" : "Open review checklist"}
             </Button>
-            <Button variant="ghost" className="gap-2" onClick={getHint} disabled={aiBusy}>
-              <BrainCircuit size={16} />
+            <Button variant="ghost" style={{ gap: 6 }} onClick={getHint} disabled={aiBusy}>
+              <BrainCircuit size={14} />
               {aiBusy ? "Thinking..." : "AI debug hint"}
             </Button>
           </div>
         </Card>
 
-        <Card className="p-6">
+        {/* Right: evaluation board */}
+        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, minHeight: 0 }}>
           <div className="hero-kicker">Evaluation Board</div>
-          <div className="mt-2 text-2xl font-semibold">
+          <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>
             {challenge.functionName ? "Sample test feedback" : "Language review checklist"}
           </div>
 
           {challenge.sampleCases?.length ? (
-            <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/28 p-4">
-              <div className="text-xs uppercase tracking-[0.22em] text-white/45">Sample cases</div>
-              <div className="mt-3 space-y-2 text-sm text-white/68">
-                {challenge.sampleCases.map((item) => (
-                  <div key={item}>{item}</div>
-                ))}
+            <div style={{
+              padding: "12px 14px",
+              background: "var(--surface-2)", border: "1px solid var(--border-subtle)", borderRadius: 8,
+            }}>
+              <div className="label-sm" style={{ marginBottom: 8 }}>Sample cases</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: "0.825rem", color: "var(--text-muted)" }}>
+                {challenge.sampleCases.map((item) => <div key={item}>{item}</div>)}
               </div>
             </div>
           ) : null}
 
-          <div className="mt-5 space-y-3">
+          <div className="inner-scroll flex-col-fill" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {results.map((result) => (
               <div
                 key={result.id}
-                className={`rounded-[24px] border p-4 ${
-                  result.state === "pass"
-                    ? "border-emerald-300/20 bg-emerald-300/10"
+                style={{
+                  padding: "12px 14px", borderRadius: 8,
+                  background: result.state === "pass"
+                    ? "rgba(34,197,94,0.08)"
                     : result.state === "fail"
-                      ? "border-rose-300/20 bg-rose-300/10"
-                      : "border-sky-300/20 bg-sky-300/10"
-                }`}
+                      ? "rgba(239,68,68,0.08)"
+                      : "rgba(56,189,248,0.08)",
+                  border: `1px solid ${result.state === "pass"
+                    ? "rgba(34,197,94,0.22)"
+                    : result.state === "fail"
+                      ? "rgba(239,68,68,0.22)"
+                      : "rgba(56,189,248,0.22)"}`,
+                }}
               >
-                <div className="font-semibold">{result.label}</div>
-                <div className="mt-2 text-sm text-white/75">Expected: {result.expected}</div>
-                <div className="mt-1 text-sm text-white/60">Actual: {result.actual}</div>
+                <div style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--text)" }}>{result.label}</div>
+                <div style={{ marginTop: 4, fontSize: "0.8rem", color: "var(--text-muted)" }}>Expected: {result.expected}</div>
+                <div style={{ marginTop: 2, fontSize: "0.8rem", color: "var(--text-faint)" }}>Actual: {result.actual}</div>
               </div>
             ))}
 
             {results.length === 0 ? (
-              <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-8 text-sm text-white/45">
+              <div style={{
+                padding: "24px 16px", textAlign: "center",
+                border: "1px dashed var(--border-subtle)", borderRadius: 10,
+                fontSize: "0.825rem", color: "var(--text-faint)",
+              }}>
                 {challenge.functionName
                   ? "Run local tests to see pass and fail feedback here."
-                  : "Open the review checklist to get language-specific evaluation points here."}
+                  : "Open the review checklist to get language-specific evaluation points here."
+                }
               </div>
             ) : null}
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-white/10 bg-slate-950/28 p-4 text-sm text-white/62">
+          <div style={{
+            padding: "12px 14px",
+            background: "var(--surface-2)", border: "1px solid var(--border-subtle)",
+            borderRadius: 8, fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.65,
+            flexShrink: 0,
+          }}>
             JavaScript is executable in-browser right now. The remaining language tracks are built
             as interview-style practice sets with richer prompts, samples, and review targets so
             your coding area feels much broader immediately.
@@ -552,12 +556,15 @@ export function CodingPage() {
 
 function Tile({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-      <div className="flex items-center gap-2 text-sm text-white/55">
-        <Icon size={16} className="text-cyan-200" />
+    <div style={{
+      padding: "12px 14px",
+      background: "var(--surface-2)", border: "1px solid var(--border-subtle)", borderRadius: 8,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: 8 }}>
+        <Icon size={14} style={{ color: "var(--accent)" }} />
         {label}
       </div>
-      <div className="mt-3 text-2xl font-semibold">{value}</div>
+      <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>{value}</div>
     </div>
   );
 }

@@ -132,15 +132,15 @@ function MathInner() {
   const toast = useToast();
   useFairPlayMonitor("math");
 
-  const [question, setQuestion] = useState(() => nextQuestion());
-  const [selected, setSelected] = useState(null);
-  const [streak, setStreak] = useState(0);
+  const [question, setQuestion]   = useState(() => nextQuestion());
+  const [selected, setSelected]   = useState(null);
+  const [streak, setStreak]       = useState(0);
   const [bestStreak, setBestStreak] = useState(() => loadBestStreak());
-  const [seconds, setSeconds] = useState(90);
-  const [running, setRunning] = useState(false);
-  const [attempts, setAttempts] = useState(0);
+  const [seconds, setSeconds]     = useState(90);
+  const [running, setRunning]     = useState(false);
+  const [attempts, setAttempts]   = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [aiBusy, setAiBusy] = useState(false);
+  const [aiBusy, setAiBusy]       = useState(false);
 
   useEffect(() => {
     if (!running) return;
@@ -179,11 +179,7 @@ function MathInner() {
       score,
       accuracy,
       durationMs: Math.max(0, (90 - seconds) * 1000),
-      metadata: {
-        topic: question.topic,
-        attempts,
-        correctCount,
-      },
+      metadata: { topic: question.topic, attempts, correctCount },
     });
 
     toast.push({
@@ -206,12 +202,12 @@ function MathInner() {
   function submit() {
     if (selected == null || !running) return;
 
-    const isCorrect = selected === question.answerIndex;
+    const isCorrect    = selected === question.answerIndex;
     const nextAttempts = attempts + 1;
     setAttempts(nextAttempts);
 
     if (isCorrect) {
-      const nextStreak = streak + 1;
+      const nextStreak  = streak + 1;
       const nextCorrect = correctCount + 1;
       setStreak(nextStreak);
       setCorrectCount(nextCorrect);
@@ -221,22 +217,13 @@ function MathInner() {
         saveBestStreak(nextStreak);
       }
 
-      toast.push({
-        title: "Correct",
-        message: `${question.topic} handled well. Keep the streak alive.`,
-        kind: "success",
-      });
+      toast.push({ title: "Correct", message: `${question.topic} handled well. Keep the streak alive.`, kind: "success" });
       moveNext();
       return;
     }
 
     setStreak(0);
-    toast.push({
-      title: "Not this one",
-      message: question.explanation,
-      kind: "warning",
-      durationMs: 5500,
-    });
+    toast.push({ title: "Not this one", message: question.explanation, kind: "warning", durationMs: 5500 });
     moveNext();
   }
 
@@ -254,97 +241,125 @@ function MathInner() {
       });
       toast.push({ title: "AI hint", message: data.hint, kind: "info", durationMs: 5000 });
     } catch (err) {
-      toast.push({
-        title: "AI hint unavailable",
-        message: err?.response?.data?.error || "Configure OPENAI_API_KEY on the server.",
-        kind: "warning",
-      });
+      toast.push({ title: "AI hint unavailable", message: err?.response?.data?.error || "Configure OPENAI_API_KEY on the server.", kind: "warning" });
     } finally {
       setAiBusy(false);
     }
   }
 
   return (
-    <div className="space-y-6 pb-24">
-      <Card className="p-6 md:p-8">
-        <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+    <div className="flex-col-fill" style={{ gap: 12 }}>
+
+      {/* ── Header card ── */}
+      <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Math Clash</div>
-            <div className="display-title mt-2 text-4xl md:text-5xl">
+            <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
               Grade 11-12 questions under timed pressure.
             </div>
-            <div className="mt-4 max-w-3xl text-sm leading-7 text-white/63 md:text-base">
+            <div style={{ marginTop: 8, fontSize: "0.875rem", lineHeight: 1.75, color: "var(--text-muted)" }}>
               This round now uses tougher school-level math across calculus, logs, vectors,
               probability, matrices, and more. It is built to feel like a serious timed drill, not
               primary-level arithmetic.
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Stat icon={Sigma} label="Topic" value={question.topic} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+            <Stat icon={Sigma}        label="Topic"  value={question.topic} />
             <Stat icon={BrainCircuit} label="Streak" value={String(streak)} />
-            <Stat icon={Timer} label="Timer" value={`${seconds}s`} />
+            <Stat icon={Timer}        label="Timer"  value={`${seconds}s`} />
           </div>
         </div>
       </Card>
 
-      <div className="grid gap-4 xl:grid-cols-[1fr_0.9fr]">
-        <Card className="p-6">
-          <div className="rounded-[30px] border border-white/10 bg-slate-950/28 p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-xs uppercase tracking-[0.22em] text-white/45">
-                {question.topic} | {question.difficulty}
-              </div>
-              <div className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/58">
+      {/* ── Main grid ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 0.9fr", gap: 10, flex: 1, minHeight: 0 }}>
+
+        {/* Left: question area */}
+        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
+          {/* Timer bar */}
+          <div style={{ height: 5, borderRadius: 99, background: "var(--surface-2)", overflow: "hidden" }}>
+            <div style={{
+              height: "100%", borderRadius: 99,
+              background: seconds <= 15
+                ? "linear-gradient(90deg,#f59e0b,#ef4444)"
+                : "var(--btn-bg)",
+              width: `${(seconds / 90) * 100}%`,
+              transition: "width 1s linear",
+            }} />
+          </div>
+
+          {/* Question card */}
+          <div style={{
+            padding: "18px 20px",
+            background: "var(--surface-2)", border: "1px solid var(--border-subtle)", borderRadius: 10,
+          }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 12 }}>
+              <div className="label-sm">{question.topic} | {question.difficulty}</div>
+              <div style={{
+                padding: "2px 10px", borderRadius: 4,
+                background: "var(--surface)", border: "1px solid var(--border-subtle)",
+                fontSize: "0.72rem", color: "var(--text-faint)",
+              }}>
                 {MATH_QUESTIONS.length} question bank
               </div>
             </div>
-            <div className="mt-4 text-2xl font-semibold leading-9 md:text-3xl">{question.prompt}</div>
+            <div style={{ fontSize: "1rem", fontWeight: 600, lineHeight: 1.55, color: "var(--text)" }}>
+              {question.prompt}
+            </div>
           </div>
 
-          <div className="mt-5 grid gap-3">
+          {/* Options */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
             {question.options.map((option, index) => (
               <button
                 key={`${question.id}-${option}`}
                 type="button"
-                className={`rounded-[22px] border px-4 py-4 text-left text-sm transition md:text-base ${
-                  selected === index
-                    ? "border-cyan-200/35 bg-cyan-300/12 text-white"
-                    : "border-white/10 bg-white/5 text-white/72 hover:bg-white/10"
-                }`}
                 onClick={() => setSelected(index)}
                 disabled={!running}
+                style={{
+                  padding: "12px 16px", borderRadius: 8, textAlign: "left",
+                  cursor: running ? "pointer" : "default",
+                  background: selected === index ? "var(--accent-dim)" : "var(--surface-2)",
+                  border: `1px solid ${selected === index ? "var(--border-hover)" : "var(--border-subtle)"}`,
+                  color: selected === index ? "var(--text)" : "var(--text-muted)",
+                  fontSize: "0.875rem", transition: "all 0.12s",
+                }}
               >
-                <span className="mr-3 text-white/45">{String.fromCharCode(65 + index)}.</span>
+                <span style={{ color: "var(--text-faint)", marginRight: 8, fontWeight: 700 }}>
+                  {String.fromCharCode(65 + index)}.
+                </span>
                 {option}
               </button>
             ))}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             <Button onClick={start}>{running ? "Restart round" : "Start round"}</Button>
-            <Button variant="secondary" onClick={submit} disabled={!running || selected == null}>
-              Submit answer
-            </Button>
-            <Button variant="secondary" onClick={stopRun} disabled={!running}>
-              Stop
-            </Button>
+            <Button variant="secondary" onClick={submit} disabled={!running || selected == null}>Submit answer</Button>
+            <Button variant="secondary" onClick={stopRun} disabled={!running}>Stop</Button>
             <Button variant="ghost" onClick={getHint} disabled={aiBusy}>
               {aiBusy ? "Thinking..." : "AI strategy hint"}
             </Button>
           </div>
         </Card>
 
-        <Card className="p-6">
+        {/* Right: performance panel */}
+        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
           <div className="hero-kicker">Performance</div>
-          <div className="mt-2 text-2xl font-semibold">Advanced round snapshot</div>
+          <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>Advanced round snapshot</div>
 
-          <div className="mt-5 grid gap-3">
-            <DataBox label="Best streak" value={String(bestStreak || 0)} />
+          <div style={{ display: "grid", gap: 8 }}>
+            <DataBox label="Best streak"     value={String(bestStreak || 0)} />
             <DataBox label="Correct answers" value={String(correctCount)} />
-            <DataBox label="Accuracy" value={`${accuracy}%`} />
+            <DataBox label="Accuracy"        value={`${accuracy}%`} />
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-white/10 bg-slate-950/28 p-4 text-sm text-white/68">
+          <div style={{
+            padding: "12px 14px",
+            background: "var(--surface-2)", border: "1px solid var(--border-subtle)",
+            borderRadius: 8, fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.65,
+          }}>
             Explanation preview: {question.explanation}
           </div>
         </Card>
@@ -363,41 +378,39 @@ export function MathDrillsPage() {
 
 function Stat({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-      <div className="flex items-center gap-2 text-sm text-white/55">
-        <Icon size={16} className="text-cyan-200" />
+    <div style={{
+      padding: "12px 14px",
+      background: "var(--surface-2)", border: "1px solid var(--border-subtle)", borderRadius: 8,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: 8 }}>
+        <Icon size={14} style={{ color: "var(--accent)" }} />
         {label}
       </div>
-      <div className="mt-3 text-xl font-semibold md:text-2xl">{value}</div>
+      <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>{value}</div>
     </div>
   );
 }
 
 function DataBox({ label, value }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/5 p-4">
-      <div className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</div>
-      <div className="mt-2 text-3xl font-semibold">{value}</div>
+    <div style={{
+      padding: "12px 14px",
+      background: "var(--surface-2)", border: "1px solid var(--border-subtle)", borderRadius: 8,
+    }}>
+      <div className="label-sm" style={{ marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.02em" }}>{value}</div>
     </div>
   );
 }
 
 const KEY = "skillnode_math_best_streak";
-
 function loadBestStreak() {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw   = localStorage.getItem(KEY);
     const value = Number(raw);
     return Number.isFinite(value) ? value : 0;
-  } catch {
-    return 0;
-  }
+  } catch { return 0; }
 }
-
 function saveBestStreak(value) {
-  try {
-    localStorage.setItem(KEY, String(value));
-  } catch {
-    // Ignore storage issues.
-  }
+  try { localStorage.setItem(KEY, String(value)); } catch { /* Ignore */ }
 }
