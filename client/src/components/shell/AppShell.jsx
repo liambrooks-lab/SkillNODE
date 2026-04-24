@@ -53,13 +53,13 @@ function ShellInner() {
       {/* ── Sidebar ── */}
       <aside className="sidebar" style={{ padding: "0" }}>
         {/* Logo + branding */}
-        <div style={{
+        <div className="shell-brand" style={{
           padding: "18px 16px 14px",
           borderBottom: "1px solid var(--border-subtle)",
           flexShrink: 0,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <img src="/logo-vortex.svg" alt="SkillNODE" style={{ width: 36, height: 36, borderRadius: "8px" }} />
+          <div className="shell-brand-lockup" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <img src="/logo-vortex.svg" alt="SkillNODE" className="shell-brand-logo" style={{ width: 36, height: 36, borderRadius: "8px" }} />
             <div>
               <div className="hero-kicker" style={{ fontSize: "0.65rem" }}>SkillNODE</div>
               <div className="display-title" style={{ fontSize: "1rem", lineHeight: 1.2 }}>Train Hard.</div>
@@ -68,7 +68,7 @@ function ShellInner() {
         </div>
 
         {/* Player card */}
-        <div style={{
+        <div className="shell-player-card" style={{
           margin: "12px 12px 8px",
           padding: "12px",
           background: "var(--surface-2)",
@@ -77,7 +77,7 @@ function ShellInner() {
           flexShrink: 0,
         }}>
           <div className="label-sm" style={{ marginBottom: "8px" }}>Player</div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div className="shell-player-main" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Avatar
               src={me?.dpUrl ? resolveMediaUrl(me.dpUrl) : null}
               name={me?.name || "S"}
@@ -93,12 +93,12 @@ function ShellInner() {
             </div>
           </div>
           {/* Status pills */}
-          <div style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
-            <div style={{ flex: 1, padding: "6px 8px", background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "5px" }}>
+          <div className="shell-status-row" style={{ display: "flex", gap: "6px", marginTop: "10px" }}>
+            <div className="shell-status-pill" style={{ flex: 1, padding: "6px 8px", background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "5px" }}>
               <ShieldCheck size={12} style={{ color: "var(--accent)" }} />
               <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600 }}>Fair play</span>
             </div>
-            <div style={{ flex: 1, padding: "6px 8px", background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "5px" }}>
+            <div className="shell-status-pill" style={{ flex: 1, padding: "6px 8px", background: "var(--surface)", border: "1px solid var(--border-subtle)", borderRadius: "7px", display: "flex", alignItems: "center", gap: "5px" }}>
               <span className="status-dot" style={{ width: 6, height: 6 }} />
               <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: 600 }}>Live</span>
             </div>
@@ -106,7 +106,7 @@ function ShellInner() {
         </div>
 
         {/* Navigation */}
-        <nav style={{ padding: "0 12px", flex: 1 }}>
+        <nav className="shell-nav" style={{ padding: "0 12px", flex: 1 }}>
           <div className="label-sm" style={{ padding: "4px 4px 6px" }}>Navigation</div>
           {NAV_ITEMS.map(item => (
             <NavLink
@@ -122,7 +122,7 @@ function ShellInner() {
         </nav>
 
         {/* Sidebar footer */}
-        <div style={{
+        <div className="shell-footer" style={{
           padding: "12px",
           borderTop: "1px solid var(--border-subtle)",
           flexShrink: 0,
@@ -130,10 +130,10 @@ function ShellInner() {
           flexDirection: "column",
           gap: "8px",
         }}>
-          <ThemeToggle />
+          <ThemeToggle className="shell-theme-toggle" variant="shell" />
           <button
             onClick={handleSignOut}
-            className="btn btn-ghost"
+            className="btn btn-ghost shell-footer-action"
             style={{ width: "100%", justifyContent: "flex-start", gap: "8px", fontSize: "0.8rem" }}
           >
             <LogOut size={15} />
@@ -146,14 +146,14 @@ function ShellInner() {
       <div className="main-area">
         {/* Slim top bar */}
         <div className="top-bar">
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}>
+          <div className="top-bar-title" style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1 }}>
             <Zap size={15} style={{ color: "var(--accent)" }} />
             <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)" }}>
               Professional Skill Platform
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{
+          <div className="top-bar-actions" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div className="top-bar-live" style={{
               fontSize: "0.72rem", fontWeight: 700,
               padding: "3px 10px",
               background: "var(--accent-dim)",
@@ -196,7 +196,7 @@ function ShellInner() {
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
       }}
-        className="mobile-nav"
+        className="mobile-nav shell-mobile-nav"
       >
         {NAV_ITEMS.map(item => (
           <NavLink

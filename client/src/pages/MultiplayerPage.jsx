@@ -176,9 +176,10 @@ export function MultiplayerPage() {
 
   return (
     <div className="multiplayer-page flex-col-fill">
-      <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
+      <Card className="multiplayer-hero-card" hoverable={false} style={{ padding: "22px 24px", flexShrink: 0 }}>
         <div className="multiplayer-hero">
           <div>
+            <div className="multiplayer-hero-pill">Realtime Arena</div>
             <div className="hero-kicker">Multiplayer &amp; Collaboration</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
               Share a room code, join from any device, and keep talking while you play.
@@ -198,8 +199,8 @@ export function MultiplayerPage() {
         </div>
       </Card>
 
-      <div className="multiplayer-main-grid">
-        <Card className="multiplayer-card">
+      <div className="multiplayer-dashboard-grid">
+        <Card className="multiplayer-card multiplayer-room-card" hoverable={false}>
           <div>
             <div className="hero-kicker" style={{ marginBottom: 2 }}>Room Controls</div>
             <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" }}>
@@ -293,181 +294,140 @@ export function MultiplayerPage() {
           </div>
         </Card>
 
-        <div className="multiplayer-side-grid">
-          <Card className="multiplayer-card" style={{ gap: 14 }}>
-            <div className="multiplayer-status-row">
-              <div>
-                <div className="hero-kicker" style={{ marginBottom: 2 }}>Live Room</div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" }}>
-                  {joinedRoom ? humanizeRoom(joinedRoom) : "No active room"}
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "8px 12px",
-                  borderRadius: 10,
-                  background: "var(--surface-2)",
-                  border: "1px solid var(--border-subtle)",
-                }}
-              >
-                <span className="status-dot" style={{ width: 6, height: 6 }} />
-                <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                  {connected ? "Realtime on" : "Waiting"}
-                </span>
+        <Card className="multiplayer-card multiplayer-live-card" hoverable={false} style={{ gap: 14 }}>
+          <div className="multiplayer-status-row">
+            <div>
+              <div className="hero-kicker" style={{ marginBottom: 2 }}>Live Room</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" }}>
+                {joinedRoom ? humanizeRoom(joinedRoom) : "No active room"}
               </div>
             </div>
-
-            <div className="multiplayer-meta-grid">
-              <MetaCard label="Invite code" value={joinCode || "Pending"} />
-              <MetaCard label="People inside" value={String(members.length)} />
-              <MetaCard label="Chat messages" value={String(messages.length)} />
+            <div className="multiplayer-status-badge">
+              <span className="status-dot" style={{ width: 6, height: 6 }} />
+              <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                {connected ? "Realtime on" : "Waiting"}
+              </span>
             </div>
-          </Card>
-
-          <div className="multiplayer-chat-layout">
-            <Card className="multiplayer-card multiplayer-chat-panel" style={{ gap: 12 }}>
-              <div>
-                <div className="hero-kicker" style={{ marginBottom: 2 }}>Room Chat</div>
-                <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)" }}>
-                  Players can coordinate without leaving the game
-                </div>
-              </div>
-
-              <div
-                ref={chatFeedRef}
-                className="inner-scroll multiplayer-chat-feed"
-                style={{
-                  padding: 4,
-                }}
-              >
-                {messages.length === 0 ? (
-                  <div
-                    style={{
-                      padding: "32px 16px",
-                      textAlign: "center",
-                      border: "1px dashed var(--border-subtle)",
-                      borderRadius: 10,
-                      fontSize: "0.85rem",
-                      color: "var(--text-faint)",
-                    }}
-                  >
-                    No messages yet. Say hello once your squad joins.
-                  </div>
-                ) : (
-                  messages.map((message) => {
-                    const mine = message.userId === sessionProfile?.id;
-
-                    return (
-                      <div
-                        key={message.id}
-                        style={{
-                          alignSelf: mine ? "flex-end" : "stretch",
-                          maxWidth: mine ? "85%" : "100%",
-                          padding: "10px 12px",
-                          borderRadius: 10,
-                          background: mine ? "var(--accent-dim)" : "var(--surface-2)",
-                          border: `1px solid ${mine ? "var(--border-hover)" : "var(--border-subtle)"}`,
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                          <span style={{ fontSize: "0.76rem", fontWeight: 700, color: mine ? "var(--accent-bright)" : "var(--text)" }}>
-                            {mine ? "You" : message.author || "Player"}
-                          </span>
-                          <span style={{ fontSize: "0.72rem", color: "var(--text-faint)" }}>
-                            {formatTime(message.createdAt)}
-                          </span>
-                        </div>
-                        <div style={{ marginTop: 6, fontSize: "0.85rem", lineHeight: 1.6, color: "var(--text-muted)", wordBreak: "break-word" }}>
-                          {message.text}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              <form className="multiplayer-chat-form" onSubmit={sendMessage}>
-                <Input
-                  value={messageDraft}
-                  onChange={(event) => setMessageDraft(event.target.value)}
-                  placeholder="Type a quick message for the room"
-                  maxLength={280}
-                />
-                <Button type="submit" style={{ gap: 6 }}>
-                  <Send size={14} /> Send
-                </Button>
-              </form>
-            </Card>
-
-            <Card className="multiplayer-card multiplayer-members-panel" style={{ gap: 12 }}>
-              <div>
-                <div className="hero-kicker" style={{ marginBottom: 2 }}>Presence</div>
-                <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)" }}>
-                  {members.length} currently online
-                </div>
-              </div>
-
-              <div className="inner-scroll flex-col-fill" style={{ gap: 6, display: "flex", flexDirection: "column" }}>
-                {members.length === 0 ? (
-                  <div
-                    style={{
-                      padding: "32px 16px",
-                      textAlign: "center",
-                      border: "1px dashed var(--border-subtle)",
-                      borderRadius: 10,
-                      fontSize: "0.85rem",
-                      color: "var(--text-faint)",
-                    }}
-                  >
-                    Nobody else is here yet. Share the invite code and wait for the team to join.
-                  </div>
-                ) : (
-                  members.map((member) => (
-                    <div
-                      key={member.socketId}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 10,
-                        padding: "10px 12px",
-                        background: "var(--surface-2)",
-                        border: "1px solid var(--border-subtle)",
-                        borderRadius: 8,
-                      }}
-                    >
-                      <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.875rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {member.userId === sessionProfile?.id ? `${member.name || "Player"} (You)` : member.name || "Player"}
-                        </div>
-                        <div style={{ marginTop: 1, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-faint)" }}>
-                          Active participant
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          padding: "2px 10px",
-                          borderRadius: 6,
-                          fontSize: "0.72rem",
-                          fontWeight: 700,
-                          background: "rgba(34,197,94,0.12)",
-                          border: "1px solid rgba(34,197,94,0.25)",
-                          color: "#4ade80",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {member.socketId.slice(0, 6)}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </Card>
           </div>
-        </div>
+
+          <div className="multiplayer-meta-grid">
+            <MetaCard label="Invite code" value={joinCode || "Pending"} />
+            <MetaCard label="People inside" value={String(members.length)} />
+            <MetaCard label="Chat messages" value={String(messages.length)} />
+          </div>
+        </Card>
+
+        <Card className="multiplayer-card multiplayer-chat-card multiplayer-chat-panel" hoverable={false} style={{ gap: 12 }}>
+          <div>
+            <div className="hero-kicker" style={{ marginBottom: 2 }}>Room Chat</div>
+            <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)" }}>
+              Players can coordinate without leaving the game
+            </div>
+          </div>
+
+          <div
+            ref={chatFeedRef}
+            className="inner-scroll multiplayer-chat-feed"
+            style={{
+              padding: 4,
+            }}
+          >
+            {messages.length === 0 ? (
+              <div
+                style={{
+                  padding: "32px 16px",
+                  textAlign: "center",
+                  border: "1px dashed var(--border-subtle)",
+                  borderRadius: 14,
+                  fontSize: "0.85rem",
+                  color: "var(--text-faint)",
+                }}
+              >
+                No messages yet. Say hello once your squad joins.
+              </div>
+            ) : (
+              messages.map((message) => {
+                const mine = message.userId === sessionProfile?.id;
+
+                return (
+                  <div
+                    key={message.id}
+                    className={`multiplayer-message${mine ? " mine" : ""}`}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                      <span style={{ fontSize: "0.76rem", fontWeight: 700, color: mine ? "var(--accent-bright)" : "var(--text)" }}>
+                        {mine ? "You" : message.author || "Player"}
+                      </span>
+                      <span style={{ fontSize: "0.72rem", color: "var(--text-faint)" }}>
+                        {formatTime(message.createdAt)}
+                      </span>
+                    </div>
+                    <div style={{ marginTop: 6, fontSize: "0.85rem", lineHeight: 1.6, color: "var(--text-muted)", wordBreak: "break-word" }}>
+                      {message.text}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          <form className="multiplayer-chat-form" onSubmit={sendMessage}>
+            <Input
+              value={messageDraft}
+              onChange={(event) => setMessageDraft(event.target.value)}
+              placeholder="Type a quick message for the room"
+              maxLength={280}
+            />
+            <Button type="submit" style={{ gap: 6 }}>
+              <Send size={14} /> Send
+            </Button>
+          </form>
+        </Card>
+
+        <Card className="multiplayer-card multiplayer-members-card multiplayer-members-panel" hoverable={false} style={{ gap: 12 }}>
+          <div>
+            <div className="hero-kicker" style={{ marginBottom: 2 }}>Presence</div>
+            <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)" }}>
+              {members.length} currently online
+            </div>
+          </div>
+
+          <div className="inner-scroll flex-col-fill" style={{ gap: 8, display: "flex", flexDirection: "column" }}>
+            {members.length === 0 ? (
+              <div
+                style={{
+                  padding: "32px 16px",
+                  textAlign: "center",
+                  border: "1px dashed var(--border-subtle)",
+                  borderRadius: 14,
+                  fontSize: "0.85rem",
+                  color: "var(--text-faint)",
+                }}
+              >
+                Nobody else is here yet. Share the invite code and wait for the team to join.
+              </div>
+            ) : (
+              members.map((member) => (
+                <div
+                  key={member.socketId}
+                  className="multiplayer-member-row"
+                >
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.925rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {member.userId === sessionProfile?.id ? `${member.name || "Player"} (You)` : member.name || "Player"}
+                    </div>
+                    <div style={{ marginTop: 3, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-faint)" }}>
+                      Active participant
+                    </div>
+                  </div>
+                  <div className="multiplayer-member-chip">
+                    {member.socketId.slice(0, 6)}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );
@@ -484,14 +444,7 @@ function FieldBlock({ label, children }) {
 
 function MiniSignal({ icon: Icon, title, value }) {
   return (
-    <div
-      style={{
-        padding: "12px 14px",
-        background: "var(--surface-2)",
-        border: "1px solid var(--border-subtle)",
-        borderRadius: 8,
-      }}
-    >
+    <div className="multiplayer-signal-card">
       <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: "0.8rem", color: "var(--text-muted)" }}>
         <Icon size={15} style={{ color: "var(--accent)" }} />
         {title}
@@ -505,14 +458,7 @@ function MiniSignal({ icon: Icon, title, value }) {
 
 function MetaCard({ label, value }) {
   return (
-    <div
-      style={{
-        padding: "12px 14px",
-        background: "var(--surface-2)",
-        border: "1px solid var(--border-subtle)",
-        borderRadius: 8,
-      }}
-    >
+    <div className="multiplayer-meta-card">
       <div className="label-sm" style={{ marginBottom: 4 }}>{label}</div>
       <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>{value}</div>
     </div>
