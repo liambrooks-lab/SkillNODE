@@ -94,7 +94,7 @@ function GuessingInner() {
 
       {/* ── Header card ── */}
       <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "start" }}>
+        <div className="app-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Guess Works</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
@@ -105,7 +105,7 @@ function GuessingInner() {
               more complete, more social, and more replayable.
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          <div className="app-hero-stats-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             <Signal icon={Hash}        label="Mode"  value={mode === "number" ? "Number" : "Word"} />
             <Signal icon={BrainCircuit}label="Tries" value={String(tries)} />
             <Signal icon={SpellCheck2} label="Best"  value={String(best[mode] || "—")} />
@@ -114,7 +114,7 @@ function GuessingInner() {
       </Card>
 
       {/* ── Main grid ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 0.9fr", gap: 10, flex: 1, minHeight: 0 }}>
+      <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1fr 0.9fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Left: game area */}
         <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -143,7 +143,7 @@ function GuessingInner() {
           {/* Guess input */}
           <div>
             <div className="label-sm" style={{ marginBottom: 5 }}>Your guess</div>
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="app-input-row" style={{ display: "flex", gap: 8 }}>
               <div style={{ flex: 1 }}>
                 <Input
                   value={guess}
@@ -166,7 +166,7 @@ function GuessingInner() {
             Hint: {hint}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             <Button onClick={reset}>New round</Button>
             <Button variant="secondary" onClick={() => setGuess("")}>Clear</Button>
           </div>

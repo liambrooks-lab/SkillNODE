@@ -97,7 +97,7 @@ function TypingInner() {
 
       {/* ── Header card ── */}
       <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "start" }}>
+        <div className="app-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Typing Velocity</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
@@ -108,7 +108,7 @@ function TypingInner() {
               clean, serious UI. It is built for both solo practice and future multiplayer races.
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          <div className="app-hero-stats-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             <MiniStat icon={Gauge}        label="WPM"      value={String(wpm)} />
             <MiniStat icon={BrainCircuit} label="Accuracy" value={`${accuracy}%`} />
             <MiniStat icon={ShieldCheck}  label="Progress" value={`${progress}%`} />
@@ -117,7 +117,7 @@ function TypingInner() {
       </Card>
 
       {/* ── Main grid ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 10, flex: 1, minHeight: 0 }}>
+      <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Left: editor */}
         <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
@@ -151,7 +151,7 @@ function TypingInner() {
             }} />
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             <Button onClick={startNewText}>New text</Button>
             <Button variant="secondary" onClick={finishRun} disabled={!running}>Finish run</Button>
             <Button variant="ghost" onClick={getHint} disabled={aiBusy}>

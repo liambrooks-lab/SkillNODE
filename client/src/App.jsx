@@ -52,8 +52,20 @@ export default function App() {
 
 function RouteFallback() {
   return (
-    <div className="app-shell-bg flex min-h-screen items-center justify-center px-6">
-      <div className="rounded-[28px] border border-white/10 bg-white/5 px-6 py-4 text-sm text-white/70 backdrop-blur-2xl">
+    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: "var(--bg)" }}>
+      <div
+        style={{
+          borderRadius: 28,
+          border: "1px solid var(--border)",
+          background: "linear-gradient(180deg, var(--surface), var(--surface-2))",
+          padding: "16px 24px",
+          fontSize: "0.875rem",
+          color: "var(--text-muted)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: "var(--card-shadow)",
+        }}
+      >
         Loading SkillNODE...
       </div>
     </div>

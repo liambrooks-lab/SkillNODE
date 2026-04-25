@@ -31,32 +31,35 @@ export function ToastProvider({ children }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 380, damping: 28 }}
-              className={cn(
-                "relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 backdrop-blur-xl p-4 shadow-[0_25px_80px_-50px_rgba(0,0,0,0.85)]",
-                t.kind === "success" && "border-emerald-400/20",
-                t.kind === "error" && "border-rose-400/25",
-                t.kind === "warning" && "border-amber-400/25",
-              )}
+              className="app-toast"
+              style={{
+                borderColor:
+                  t.kind === "success" ? "rgba(16,185,129,0.24)"
+                    : t.kind === "error" ? "rgba(244,63,94,0.24)"
+                    : t.kind === "warning" ? "rgba(245,158,11,0.24)"
+                    : "var(--border)",
+              }}
             >
               <div
-                className={cn(
-                  "absolute left-0 top-0 h-full w-1.5",
-                  t.kind === "success" && "bg-emerald-400/80",
-                  t.kind === "error" && "bg-rose-400/80",
-                  t.kind === "warning" && "bg-amber-400/80",
-                  t.kind === "info" && "bg-indigo-400/80",
-                )}
+                className="absolute left-0 top-0 h-full w-1.5"
+                style={{
+                  background:
+                    t.kind === "success" ? "rgba(16,185,129,0.84)"
+                      : t.kind === "error" ? "rgba(244,63,94,0.84)"
+                      : t.kind === "warning" ? "rgba(245,158,11,0.84)"
+                      : "rgba(99,102,241,0.84)",
+                }}
               />
               <button
-                className="absolute right-3 top-3 rounded-lg p-1 text-white/60 hover:bg-white/10 hover:text-white"
+                className="app-toast-dismiss"
                 onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
                 aria-label="Dismiss toast"
               >
                 <X size={16} />
               </button>
               <div className="pl-3 pr-6">
-                <div className="text-sm font-semibold text-white">{t.title}</div>
-                {t.message ? <div className="mt-1 text-sm text-white/70">{t.message}</div> : null}
+                <div className="app-toast-title">{t.title}</div>
+                {t.message ? <div className="app-toast-message">{t.message}</div> : null}
               </div>
             </motion.div>
           ))}

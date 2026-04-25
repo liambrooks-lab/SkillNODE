@@ -28,7 +28,7 @@ export function DashboardPage() {
     <div className="flex-col-fill" style={{ gap: 12 }}>
 
       {/* ── Row 1: Metrics ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, flexShrink: 0 }}>
+      <div className="app-card-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, flexShrink: 0 }}>
         <MetricBox label="Attempts" value={String(summary?.totals?.totalAttempts ?? 0)} />
         <MetricBox label="Alerts"   value={String(summary?.totals?.alertCount ?? 0)} color="warning" />
         <MetricBox label="Bests"    value={String(bestResults.length)} />
@@ -36,7 +36,7 @@ export function DashboardPage() {
       </div>
 
       {/* ── Row 2: Tracks + Leaderboard ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 10, flex: 1, minHeight: 0 }}>
+      <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1.35fr 1fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Track Cards grid */}
         <div className="card" style={{ padding: "16px", display: "flex", flexDirection: "column", minHeight: 0 }}>
@@ -56,7 +56,7 @@ export function DashboardPage() {
             </Link>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, flex: 1, minHeight: 0 }}>
+          <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, flex: 1, minHeight: 0 }}>
             {featuredTracks.map((track, i) => (
               <Link key={track.slug} to={track.route} style={{ textDecoration: "none" }}>
                 <div
@@ -160,7 +160,7 @@ export function DashboardPage() {
       </div>
 
       {/* ── Row 3: Signal cards ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, flexShrink: 0 }}>
+      <div className="app-promo-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, flexShrink: 0 }}>
         <SignalCard icon={BrainCircuit} title="AI coaching in context"
           copy="Hints are attached to each challenge surface so the product feels useful, not decorative." />
         <SignalCard icon={Users} title="Social by design"

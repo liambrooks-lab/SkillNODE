@@ -143,7 +143,7 @@ function GrammarInner() {
 
       {/* ── Header card ── */}
       <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
+        <div className="app-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Grammar Edge</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
@@ -154,7 +154,7 @@ function GrammarInner() {
               score tracking, focused prompts, and AI explanation support.
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          <div className="app-hero-stats-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             <Tile icon={Languages}   label="Questions" value={String(QUESTIONS.length)} />
             <Tile icon={ListChecks}  label="Score"     value={String(score)} />
             <Tile icon={BrainCircuit}label="Progress"  value={`${progress}%`} />
@@ -163,7 +163,7 @@ function GrammarInner() {
       </Card>
 
       {/* ── Main grid ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 10, flex: 1, minHeight: 0 }}>
+      <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Left: question area */}
         <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
@@ -226,7 +226,7 @@ function GrammarInner() {
                 ))}
               </div>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 <Button onClick={submit} disabled={selected == null}>Submit answer</Button>
                 <Button variant="ghost" onClick={getHint} disabled={aiBusy}>
                   {aiBusy ? "Thinking..." : "AI explanation hint"}

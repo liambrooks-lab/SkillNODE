@@ -158,7 +158,7 @@ function ComprehensionInner() {
 
       {/* ── Header card ── */}
       <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
+        <div className="app-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Reading Intel</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
@@ -169,7 +169,7 @@ function ComprehensionInner() {
               part of the real product flow rather than an afterthought.
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          <div className="app-hero-stats-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             <Tile icon={BookOpenText}  label="Passages"  value={String(PASSAGES.length)} />
             <Tile icon={SearchCheck}   label="Questions" value={String(passage.questions.length)} />
             <Tile icon={BrainCircuit}  label="Score"     value={String(score)} />
@@ -198,7 +198,7 @@ function ComprehensionInner() {
       </div>
 
       {/* ── Main grid ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 10, flex: 1, minHeight: 0 }}>
+      <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Left: passage + questions */}
         <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
@@ -267,7 +267,7 @@ function ComprehensionInner() {
             ))}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, flexShrink: 0 }}>
+          <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 8, flexShrink: 0 }}>
             {completed ? (
               <Button onClick={reset}>Try again</Button>
             ) : (

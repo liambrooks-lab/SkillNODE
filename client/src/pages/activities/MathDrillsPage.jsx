@@ -252,7 +252,7 @@ function MathInner() {
 
       {/* ── Header card ── */}
       <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
+        <div className="app-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Math Clash</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
@@ -264,7 +264,7 @@ function MathInner() {
               primary-level arithmetic.
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          <div className="app-hero-stats-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             <Stat icon={Sigma}        label="Topic"  value={question.topic} />
             <Stat icon={BrainCircuit} label="Streak" value={String(streak)} />
             <Stat icon={Timer}        label="Timer"  value={`${seconds}s`} />
@@ -273,7 +273,7 @@ function MathInner() {
       </Card>
 
       {/* ── Main grid ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 0.9fr", gap: 10, flex: 1, minHeight: 0 }}>
+      <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1fr 0.9fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Left: question area */}
         <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14, minHeight: 0 }}>
@@ -334,7 +334,7 @@ function MathInner() {
             ))}
           </div>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             <Button onClick={start}>{running ? "Restart round" : "Start round"}</Button>
             <Button variant="secondary" onClick={submit} disabled={!running || selected == null}>Submit answer</Button>
             <Button variant="secondary" onClick={stopRun} disabled={!running}>Stop</Button>

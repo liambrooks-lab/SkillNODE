@@ -32,7 +32,7 @@ export function ActivitiesPage() {
 
       {/* ── Header card ── */}
       <Card style={{ padding: "18px 22px", flexShrink: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 24, alignItems: "start" }}>
+        <div className="app-hero-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 24, alignItems: "start" }}>
           <div>
             <div className="hero-kicker">Skill Labs</div>
             <div className="display-title" style={{ fontSize: "1.75rem", color: "var(--text)", marginTop: 4 }}>
@@ -42,13 +42,13 @@ export function ActivitiesPage() {
               Each module below opens its own screen with its own interactions, stats, and flow.
               That makes the platform feel like a real product suite instead of a single hero page with buttons.
             </div>
-            <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <div className="app-action-row" style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
               <Button as={Link} to="/activities/code">Open Code Arena</Button>
               <Button as={Link} to="/multiplayer" variant="secondary">View social rooms</Button>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
             {labHighlights.map((item) => (
               <div key={item} style={{
                 borderRadius: 8, border: "1px solid var(--border-subtle)",
@@ -77,7 +77,7 @@ export function ActivitiesPage() {
 
       {/* ── Track grid ── */}
       <div
-        className="inner-scroll"
+        className="inner-scroll app-card-grid-3"
         style={{
           flex: 1, minHeight: 0,
           display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
@@ -113,7 +113,7 @@ export function ActivitiesPage() {
       </div>
 
       {/* ── Promo row ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, flexShrink: 0 }}>
+      <div className="app-promo-grid app-card-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, flexShrink: 0 }}>
         <PromoCard
           icon={Sparkles}
           title="AI hints where they matter"

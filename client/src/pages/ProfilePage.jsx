@@ -138,7 +138,7 @@ function ProfileInner() {
 
       {/* ── Tab: Profile (view) ── */}
       {tab === "Profile" && (
-        <div style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 10, flex: 1, minHeight: 0 }}>
+        <div className="app-split-grid" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 10, flex: 1, minHeight: 0 }}>
 
           {/* Left column: identity card */}
           <Card style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
@@ -184,7 +184,7 @@ function ProfileInner() {
               </div>
 
               {/* Action buttons */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+              <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
                 <Button variant="secondary" style={{ gap: 6 }} onClick={copyShareLink}>
                   <Copy size={14} /> Copy link
                 </Button>
@@ -194,7 +194,7 @@ function ProfileInner() {
               </div>
 
               {/* Stats chips */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 <StatChip label="Attempts" value={String(summary?.totals?.totalAttempts ?? 0)} />
                 <StatChip label="Alerts"   value={String(summary?.totals?.alertCount ?? 0)} />
               </div>
@@ -208,7 +208,7 @@ function ProfileInner() {
               <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>
                 Your public touchpoints
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {socialRows.map((social) => (
                   <SocialCard key={social.key} label={social.label} href={draft[social.key]} />
                 ))}
@@ -256,11 +256,11 @@ function ProfileInner() {
           </div>
 
           <form style={{ display: "flex", flexDirection: "column", gap: 16 }} onSubmit={saveProfile}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="app-form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Name" icon={UserRound}><Input value={draft.name} onChange={(e) => setDraft((p) => ({ ...p, name: e.target.value }))} required /></Field>
               <Field label="Email" icon={MailCheck}><Input type="email" value={draft.email} onChange={(e) => setDraft((p) => ({ ...p, email: e.target.value }))} required /></Field>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="app-form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Phone" icon={Phone}><Input value={draft.phone} onChange={(e) => setDraft((p) => ({ ...p, phone: e.target.value }))} required /></Field>
               <Field label="Region" icon={MapPin}><Input value={draft.region} onChange={(e) => setDraft((p) => ({ ...p, region: e.target.value }))} required /></Field>
             </div>
@@ -280,7 +280,7 @@ function ProfileInner() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="app-form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               {socialRows.map((social) => (
                 <Field key={social.key} label={social.label} icon={social.icon}>
                   <Input
@@ -303,7 +303,7 @@ function ProfileInner() {
 
             {error ? <div style={{ fontSize: "0.825rem", color: "#f87171" }}>{error}</div> : null}
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               <Button style={{ gap: 6 }} disabled={busy}>
                 <Save size={14} /> {busy ? "Saving..." : "Save profile"}
               </Button>
@@ -318,11 +318,11 @@ function ProfileInner() {
       {/* ── Tab: Sessions ── */}
       {tab === "Sessions" && (
         <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 10, flex: 1, minHeight: 0 }}>
+          <div className="app-split-grid" style={{ display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 10, flex: 1, minHeight: 0 }}>
             <Card style={{ padding: 18 }}>
               <div className="hero-kicker" style={{ marginBottom: 4 }}>Social Links</div>
               <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>Your public touchpoints</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {socialRows.map((social) => (
                   <SocialCard key={social.key} label={social.label} href={draft[social.key]} />
                 ))}
