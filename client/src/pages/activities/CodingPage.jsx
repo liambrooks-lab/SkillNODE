@@ -58,6 +58,31 @@ const LANGUAGE_TRACKS = [
         ],
         constraints: ["A single pass is enough."],
       },
+      {
+        id: "inventoryBuckets",
+        title: "Inventory Buckets",
+        difficulty: "Advanced",
+        description: "Group products by category and return a sorted summary with item counts per category.",
+        functionName: "inventoryBuckets",
+        starter:
+          "function inventoryBuckets(items) {\n  // items: [{ category: string, name: string }]\n  return [];\n}",
+        tests: [
+          {
+            args: [[
+              { category: "hardware", name: "mouse" },
+              { category: "hardware", name: "keyboard" },
+              { category: "books", name: "clean code" },
+            ]],
+            expected: [
+              { category: "books", count: 1 },
+              { category: "hardware", count: 2 },
+            ],
+          },
+          { args: [[{ category: "a", name: "x" }, { category: "a", name: "y" }]], expected: [{ category: "a", count: 2 }] },
+          { args: [[]], expected: [] },
+        ],
+        constraints: ["Sort the result by category name.", "Do not mutate the input array."],
+      },
     ],
   },
   {
@@ -91,6 +116,20 @@ const LANGUAGE_TRACKS = [
           "Handle 1-row and 1-column grids separately.",
           "Add top and bottom rows, then left and right edges.",
           "Avoid counting corners twice.",
+        ],
+      },
+      {
+        id: "balanced-segments",
+        title: "Balanced Segment Count",
+        difficulty: "Advanced",
+        description: "Return how many contiguous segments in a binary string contain the same number of 0s and 1s.",
+        starter:
+          "def balanced_segments(bits):\n    # bits is a string like '001101'\n    return 0\n",
+        sampleCases: ["'0011' -> 2", "'0100110101' -> 4"],
+        reviewPoints: [
+          "Track runs of repeated characters.",
+          "A valid segment exists whenever adjacent run sizes overlap.",
+          "Sum the minimum of each adjacent run pair.",
         ],
       },
     ],
@@ -128,6 +167,20 @@ const LANGUAGE_TRACKS = [
           "Shrink the search space carefully on success or failure.",
         ],
       },
+      {
+        id: "rain-water",
+        title: "Rain Water Trapped",
+        difficulty: "Advanced",
+        description: "Compute how much rain water is trapped between elevation bars.",
+        starter:
+          "#include <vector>\nusing namespace std;\n\nint trapWater(vector<int>& heights) {\n    return 0;\n}\n",
+        sampleCases: ["[0,1,0,2,1,0,1,3,2,1,2,1] -> 6"],
+        reviewPoints: [
+          "Two-pointer or prefix/suffix maxima both work.",
+          "Always compare the smaller boundary first.",
+          "Accumulate trapped water, not boundary heights.",
+        ],
+      },
     ],
   },
   {
@@ -161,6 +214,20 @@ const LANGUAGE_TRACKS = [
           "Use a HashSet for O(1) lookups.",
           "Start counting only when num - 1 is absent.",
           "Grow the streak forward and keep the maximum.",
+        ],
+      },
+      {
+        id: "rotate-image",
+        title: "Rotate Image Clockwise",
+        difficulty: "Medium",
+        description: "Rotate an NxN matrix 90 degrees clockwise in place.",
+        starter:
+          "import java.util.*;\n\nclass Solution {\n    void rotate(int[][] matrix) {\n    }\n}\n",
+        sampleCases: ["[[1,2,3],[4,5,6],[7,8,9]] -> [[7,4,1],[8,5,2],[9,6,3]]"],
+        reviewPoints: [
+          "Transpose first, then reverse each row.",
+          "Do not allocate a second matrix.",
+          "Be careful with row/column bounds in place swaps.",
         ],
       },
     ],
@@ -198,6 +265,20 @@ const LANGUAGE_TRACKS = [
           "Return -1 when the final depth is not zero.",
         ],
       },
+      {
+        id: "dedupe-timeline",
+        title: "Dedupe Timeline",
+        difficulty: "Advanced",
+        description: "Keep the latest event for every id, then return events sorted by newest first.",
+        starter:
+          "type EventRow = { id: string; at: string; value: number };\n\nexport function dedupeTimeline(rows: EventRow[]) {\n  return [];\n}\n",
+        sampleCases: ["[{id:'a',at:'2026-01-01',value:1},{id:'a',at:'2026-01-03',value:2}] -> latest entry only"],
+        reviewPoints: [
+          "Treat 'at' as a comparable timestamp string.",
+          "Store the latest row seen for each id.",
+          "Sort the final rows by descending time.",
+        ],
+      },
     ],
   },
   {
@@ -231,6 +312,20 @@ const LANGUAGE_TRACKS = [
           "Aggregate by month first.",
           "Use a window function for the previous month.",
           "Guard against division by zero in the growth formula.",
+        ],
+      },
+      {
+        id: "active-streak-days",
+        title: "Active Streak Days",
+        difficulty: "Advanced",
+        description: "Write a query that returns each user's longest streak of consecutive active days.",
+        starter:
+          "WITH ordered AS (\n  -- derive row numbers and streak groups here\n)\nSELECT *\nFROM ordered;\n",
+        sampleCases: ["Use date - row_number grouping to identify consecutive-day islands."],
+        reviewPoints: [
+          "Partition by user.",
+          "Order activity dates chronologically.",
+          "Collapse consecutive-day islands before taking MAX streak length.",
         ],
       },
     ],
@@ -401,7 +496,7 @@ function CodingInner() {
       <div className="app-main-grid" style={{ display: "grid", gridTemplateColumns: "1.05fr 0.95fr", gap: 10, flex: 1, minHeight: 0 }}>
 
         {/* Left: editor panel */}
-        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, minHeight: 0, overflow: "hidden" }}>
+        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, minHeight: 0, minWidth: 0 }}>
           {/* Challenge selector */}
           <div className="app-card-grid-2" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8, flexShrink: 0 }}>
             {language.challenges.map((item) => (
@@ -449,12 +544,14 @@ function CodingInner() {
           <textarea
             className="inner-scroll"
             style={{
-              flex: 1, resize: "none",
+              minHeight: "clamp(240px, 36vh, 420px)",
+              height: "clamp(240px, 36vh, 420px)",
+              resize: "none",
               background: "var(--surface-3)", border: "1px solid var(--border)",
               borderRadius: 10, padding: "14px 16px",
               fontFamily: "JetBrains Mono, monospace", fontSize: "0.85rem", lineHeight: 1.7,
               color: "var(--text)", caretColor: "var(--accent)",
-              outline: "none", minHeight: 0,
+              outline: "none",
             }}
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -474,7 +571,19 @@ function CodingInner() {
         </Card>
 
         {/* Right: evaluation board */}
-        <Card style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, minHeight: 0 }}>
+        <Card
+          className="inner-scroll"
+          style={{
+            padding: 20,
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            minHeight: 0,
+            minWidth: 0,
+            maxHeight: "min(72vh, 760px)",
+            overflowY: "auto",
+          }}
+        >
           <div className="hero-kicker">Evaluation Board</div>
           <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>
             {challenge.functionName ? "Sample test feedback" : "Language review checklist"}
@@ -492,7 +601,7 @@ function CodingInner() {
             </div>
           ) : null}
 
-          <div className="inner-scroll flex-col-fill" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="inner-scroll flex-col-fill" style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
             {results.map((result) => (
               <div
                 key={result.id}

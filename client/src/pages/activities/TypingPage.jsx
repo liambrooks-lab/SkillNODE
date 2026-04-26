@@ -7,11 +7,18 @@ import { api } from "../../lib/api";
 import { submitActivityResult } from "../../lib/results";
 import { useFairPlayMonitor } from "../../hooks/useFairPlayMonitor";
 
+const PLACEHOLDERS = [
+  "Start typing here. WPM climbs as you keep a steady rhythm.",
+  "Type the passage smoothly. Accuracy matters more than panic speed.",
+  "Write here to track live speed, accuracy, and overall progress.",
+  "Begin your run here and aim for clean, consistent keystrokes.",
+];
+
 const TEXTS = [
   "SkillNODE is where focus becomes visible performance under pressure.",
   "Type fast, think faster, and keep your rhythm clean for the full run.",
   "Sharp hands and calm breathing beat chaotic speed every single time.",
-  "Consistency over speed — every keystroke should feel intentional and precise.",
+  "Consistency over speed - every keystroke should feel intentional and precise.",
   "The best typists build muscle memory through deliberate, measured practice.",
 ];
 
@@ -35,6 +42,7 @@ function TypingInner() {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [history, setHistory] = useState(() => loadHistory());
   const [aiBusy, setAiBusy] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(() => Math.floor(Math.random() * PLACEHOLDERS.length));
   const t0Ref = useRef(0);
 
   const { wpm, accuracy, progress } = useMemo(
@@ -56,6 +64,7 @@ function TypingInner() {
     setInput("");
     setElapsedMs(0);
     setRunning(false);
+    setPlaceholderIndex((current) => (current + 1) % PLACEHOLDERS.length);
   }
 
   function finishRun() {
@@ -133,8 +142,15 @@ function TypingInner() {
           {/* Textarea */}
           <textarea
             className="field inner-scroll"
-            style={{ flex: 1, height: "auto", resize: "none", fontFamily: "JetBrains Mono, monospace", fontSize: "0.875rem", lineHeight: 1.7 }}
-            placeholder="Start typing here..."
+            style={{
+              minHeight: "clamp(220px, 34vh, 360px)",
+              height: "clamp(220px, 34vh, 360px)",
+              resize: "none",
+              fontFamily: "JetBrains Mono, monospace",
+              fontSize: "0.875rem",
+              lineHeight: 1.7,
+            }}
+            placeholder={PLACEHOLDERS[placeholderIndex]}
             value={input}
             onChange={(e) => {
               if (!running) { t0Ref.current = Date.now(); setRunning(true); }

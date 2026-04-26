@@ -9,7 +9,7 @@
     "server"
   ],
   "scripts": {
-    "build": "npm run build -w client && npm run prisma:generate -w server",
+    "build": "npm run build -w client && npm run prisma:generate -w server && npm run build -w server",
     "build:client": "npm run build -w client",
     "db:push": "npm run prisma:push -w server",
     "dev:client": "npm run dev -w client",

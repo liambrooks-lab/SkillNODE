@@ -103,7 +103,7 @@ function GrammarInner() {
     }
 
     if (correct) {
-      toast.push({ title: "Correct ✓", message: "Good grammar instinct. Next question.", kind: "success" });
+      toast.push({ title: "Correct", message: "Good grammar instinct. Next question.", kind: "success" });
     } else {
       toast.push({ title: "Incorrect", message: `The correct answer was option ${current.answer + 1}.`, kind: "warning" });
     }
@@ -182,10 +182,12 @@ function GrammarInner() {
               padding: 24, textAlign: "center",
               background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 10,
             }}>
-              <div style={{ fontSize: "2rem", marginBottom: 12 }}>🏆</div>
+              <div style={{ fontSize: "0.82rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 12 }}>
+                Achievement unlocked
+              </div>
               <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>Set complete</div>
               <div style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginBottom: 20 }}>
-                Final score: {score}/{QUESTIONS.length} · {Math.round((score / QUESTIONS.length) * 100)}% accuracy
+                Final score: {score}/{QUESTIONS.length} - {Math.round((score / QUESTIONS.length) * 100)}% accuracy
               </div>
               <Button onClick={reset}>Restart grammar set</Button>
             </div>

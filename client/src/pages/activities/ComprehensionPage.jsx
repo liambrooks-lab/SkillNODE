@@ -54,7 +54,7 @@ const PASSAGES = [
     id: "focus",
     title: "The Economy of Attention",
     body:
-      "Modern knowledge work is not limited by effort or resources — it is limited by attention. " +
+      "Modern knowledge work is not limited by effort or resources - it is limited by attention. " +
       "The most productive individuals are not those who work the longest hours but those who " +
       "protect large uninterrupted blocks of deep focus. Notifications, meetings, and context " +
       "switching are the silent killers of creative output. A single distraction can cost far more " +
@@ -178,7 +178,7 @@ function ComprehensionInner() {
       </Card>
 
       {/* Passage switcher */}
-      <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+      <div className="app-action-row" style={{ display: "flex", flexWrap: "wrap", gap: 6, flexShrink: 0 }}>
         {PASSAGES.map((p, i) => (
           <button
             key={p.id}
@@ -260,7 +260,7 @@ function ComprehensionInner() {
 
                 {completed ? (
                   <div style={{ marginTop: 8, fontSize: "0.78rem", fontWeight: 600, color: answers[question.id] === question.answer ? "#4ade80" : "#f87171" }}>
-                    {answers[question.id] === question.answer ? "✓ Correct" : `✗ Correct answer: ${question.options[question.answer]}`}
+                    {answers[question.id] === question.answer ? "Correct" : `Answer: ${question.options[question.answer]}`}
                   </div>
                 ) : null}
               </div>
